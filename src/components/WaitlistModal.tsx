@@ -30,6 +30,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${anonKey}`,
           'apikey': anonKey,
         },
         body: JSON.stringify({ name, email }),

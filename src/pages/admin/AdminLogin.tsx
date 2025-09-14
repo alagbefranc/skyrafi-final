@@ -62,6 +62,7 @@ const AdminLogin: React.FC = () => {
         const checkUrl = SUPABASE_ADMIN_CHECK_URL;
         const anonKey = SUPABASE_ANON_KEY;
         const token = data.session.access_token;
+        console.log('Admin check debug:', { checkUrl, anonKey: anonKey ? 'present' : 'missing', token: token ? 'present' : 'missing' });
         if (checkUrl && anonKey && token) {
           const res = await fetch(checkUrl, { headers: { Authorization: `Bearer ${token}`, apikey: anonKey } });
           const json = await res.json();
