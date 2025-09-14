@@ -3,13 +3,40 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Careers from './pages/Careers';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import Contact from './pages/Contact';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminJobs from './pages/admin/AdminJobs';
+import AdminApplications from './pages/admin/AdminApplications';
+import AdminWaitlist from './pages/admin/AdminWaitlist';
+import AdminEmployees from './pages/admin/AdminEmployees';
+import AdminSettings from './pages/admin/AdminSettings';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/jobs" element={<AdminJobs />} />
+        <Route path="/admin/applications" element={<AdminApplications />} />
+        <Route path="/admin/waitlist" element={<AdminWaitlist />} />
+        <Route path="/admin/employees" element={<AdminEmployees />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

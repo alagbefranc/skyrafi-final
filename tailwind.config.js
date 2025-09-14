@@ -1,29 +1,32 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
       colors: {
         'sky-blue': {
-          50: '#e6f7ff',
-          100: '#bae7ff',
-          200: '#91d5ff',
-          300: '#69c0ff',
-          400: '#40a9ff',
-          500: '#1890ff',
-          600: '#40B5E8',
-          700: '#0050b3',
-          800: '#003a8c',
-          900: '#002766',
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#1F7EBF',
+          600: '#1B7FBF',
+          700: '#1870A6',
+          800: '#155E8C',
+          900: '#134E73',
         },
-        'dark-blue': '#003d80',
-        'navy': '#002659',
+        'brand-blue': '#1F7EBF',
+        'brand-green': '#10b981',
+        'dark-blue': '#1870A6',
+        'navy': '#134E73',
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        'display': ['Orbitron', 'system-ui', 'sans-serif'],
+        'display': ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
-import { ReactComponent as CheckBadge } from '../assets/check-badge.svg';
+import checkBadgeIcon from '../assets/check-badge.svg';
+import { getEnv } from '../lib/env';
 
 interface WaitlistModalProps {
   isOpen: boolean;
@@ -14,24 +15,47 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsLoading(false);
-    setIsSubmitted(true);
-    
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setEmail('');
-      setName('');
-      onClose();
-    }, 3000);
+    setErrorMsg(null);
+
+    try {
+      const fnUrl = getEnv('REACT_APP_SUPABASE_FUNCTION_URL') || getEnv('VITE_SUPABASE_FUNCTION_URL');
+      const anonKey = getEnv('REACT_APP_SUPABASE_ANON_KEY') || getEnv('VITE_SUPABASE_ANON_KEY');
+      if (!fnUrl) throw new Error('Missing SUPABASE_FUNCTION_URL');
+      if (!anonKey) throw new Error('Missing SUPABASE_ANON_KEY');
+
+      const res = await fetch(fnUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || `Request failed (${res.status})`);
+      }
+
+      setIsSubmitted(true);
+
+      // Reset after 3 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setEmail('');
+        setName('');
+        onClose();
+      }, 3000);
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const modalVariants = {
@@ -160,15 +184,15 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                     <p className="text-sm text-gray-600 text-center mb-3">What you'll get:</p>
                     <ul className="space-y-2 text-sm text-gray-600">
                       <li className="flex items-center gap-2">
-                        <CheckBadge className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <img src={checkBadgeIcon} alt="Check" className="w-4 h-4 flex-shrink-0" />
                         <span>Early access to the app</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckBadge className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <img src={checkBadgeIcon} alt="Check" className="w-4 h-4 flex-shrink-0" />
                         <span>Free Debt Freedom Toolkit</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckBadge className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <img src={checkBadgeIcon} alt="Check" className="w-4 h-4 flex-shrink-0" />
                         <span>Exclusive founding member pricing</span>
                       </li>
                     </ul>
@@ -187,7 +211,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                     transition={{ type: 'spring' as const, delay: 0.2 }}
                     className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4"
                   >
-                    <CheckBadge className="w-12 h-12 text-green-600" />
+                    <img src={checkBadgeIcon} alt="Check" className="w-12 h-12" />
                   </motion.div>
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">You're on the list!</h3>
                   <p className="text-sm sm:text-base text-gray-600">

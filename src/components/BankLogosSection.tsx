@@ -4,7 +4,6 @@ import { Building2 } from 'lucide-react';
 
 // Import bank logos
 import chaseLogo from '../assets/bank-logos/chase.png';
-import boaLogo from '../assets/bank-logos/bank-of-america.png';
 import wellsFargoLogo from '../assets/bank-logos/wells-fargo.png';
 import citiLogo from '../assets/bank-logos/citibank.png';
 import usBankLogo from '../assets/bank-logos/us-bank.png';
@@ -58,7 +57,6 @@ const BankLogosSection: React.FC = () => {
   const banks: BankLogo[] = [
     // US Banks with downloaded logos
     { name: 'JP Morgan Chase', logo: chaseLogo, placeholder: false },
-    { name: 'Bank of America', logo: boaLogo, placeholder: false },
     { name: 'Wells Fargo', logo: wellsFargoLogo, placeholder: false },
     { name: 'Citibank', logo: citiLogo, placeholder: false },
     { name: 'US Bank', logo: usBankLogo, placeholder: false },
