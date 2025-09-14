@@ -16,6 +16,15 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +80,20 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const bottomSheetVariants = {
+    hidden: { opacity: 0, y: '100%' },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: 'spring' as const, damping: 25, stiffness: 200 }
+    },
+    exit: { 
+      opacity: 0, 
+      y: '100%',
+      transition: { duration: 0.3 }
+    }
+  };
+
   const overlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -81,7 +104,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center"
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -93,24 +116,43 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
             onClick={onClose}
           />
 
-          {/* Modal */}
+          {/* Desktop Modal or Mobile Bottom Sheet */}
           <motion.div
-            variants={modalVariants}
-            className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+            variants={isMobile ? bottomSheetVariants : modalVariants}
+            className={isMobile 
+              ? "fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-hidden"
+              : "relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+            }
           >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition z-10"
-            >
-              <X className="w-5 h-5 text-gray-500" />
-            </button>
+            {isMobile ? (
+              /* Mobile Bottom Sheet Header */
+              <div className="flex flex-col items-center py-3 pb-0">
+                {/* Pull indicator */}
+                <div className="w-10 h-1 bg-gray-300 rounded-full mb-4"></div>
+                {/* Close button for mobile */}
+                <button
+                  onClick={onClose}
+                  className="absolute top-3 right-4 p-2 rounded-full hover:bg-gray-100 transition z-10"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            ) : (
+              /* Desktop Modal Header */
+              <>
+                <button
+                  onClick={onClose}
+                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition z-10"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-sky-blue-500 rounded-full filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-blue-300 rounded-full filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2" />
+              </>
+            )}
 
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-sky-blue-500 rounded-full filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-blue-300 rounded-full filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2" />
-
-            <div className="relative p-6 sm:p-8">
+            <div className={`relative ${isMobile ? 'p-6 pb-8' : 'p-6 sm:p-8'}`}>
               {!isSubmitted ? (
                 <>
                   {/* Header */}
