@@ -15,7 +15,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +30,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${anonKey}`,
+          'apikey': anonKey,
         },
         body: JSON.stringify({ name, email }),
       });
@@ -161,9 +161,15 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
 
+                    {errorMsg && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                        {errorMsg}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      disabled={isLoading}
+                      disabled={isLoading || !name.trim() || !email.trim()}
                       className="w-full bg-sky-blue-600 text-white py-4 rounded-full font-semibold hover:bg-sky-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-display tracking-wide"
                     >
                       {isLoading ? (
