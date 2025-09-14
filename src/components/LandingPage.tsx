@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 import {
   Shield,
   Menu,
-  X
+  X,
+  Star,
+  Lock,
+  Key,
+  Check,
+  ArrowUpRight
 } from 'lucide-react';
 import { TestimonialsColumn, Testimonial } from './ui/testimonials-columns';
 import { AvatarCircles } from './ui/avatar-circles';
