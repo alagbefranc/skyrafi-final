@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
 import { Eye, Download, Mail, CheckCircle, XCircle } from 'lucide-react';
-import { getEnv } from '../../lib/env';
+import * as CONSTANTS from '../../lib/constants';
 
 const AdminApplications: React.FC = () => {
   const [applications, setApplications] = useState<any[]>([]);
@@ -12,7 +12,14 @@ const AdminApplications: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [selectedApp, setSelectedApp] = useState<any>(null);
 
-  const fn = (key: string) => getEnv(key);
+  const fn = (key: string) => {
+    switch(key) {
+      case 'VITE_SUPABASE_ADMIN_LIST_APPLICATIONS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_APPLICATIONS_URL;
+      case 'VITE_SUPABASE_ADMIN_UPDATE_APPLICATION_URL': return CONSTANTS.SUPABASE_ADMIN_UPDATE_APPLICATION_URL;
+      case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
+      default: return undefined;
+    }
+  };
 
   const getHeaders = async (): Promise<HeadersInit> => {
     const { data } = await supabase.auth.getSession();

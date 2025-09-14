@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { getEnv } from '../../lib/env';
+import { SUPABASE_ADMIN_CHECK_URL, SUPABASE_ANON_KEY } from '../../lib/constants';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ const AdminLogin: React.FC = () => {
       if (data.session) {
         try {
           // Only allow redirect to /admin if this session belongs to an allowlisted admin
-          const checkUrl = getEnv('VITE_SUPABASE_ADMIN_CHECK_URL');
-          const anonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+          const checkUrl = SUPABASE_ADMIN_CHECK_URL;
+          const anonKey = SUPABASE_ANON_KEY;
           const token = data.session.access_token;
           if (checkUrl && anonKey && token) {
             const res = await fetch(checkUrl, {
@@ -59,8 +59,8 @@ const AdminLogin: React.FC = () => {
       if (error) throw error;
       if (data.session) {
         // Double-check admin status to avoid redirect loops
-        const checkUrl = getEnv('VITE_SUPABASE_ADMIN_CHECK_URL');
-        const anonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+        const checkUrl = SUPABASE_ADMIN_CHECK_URL;
+        const anonKey = SUPABASE_ANON_KEY;
         const token = data.session.access_token;
         if (checkUrl && anonKey && token) {
           const res = await fetch(checkUrl, { headers: { Authorization: `Bearer ${token}`, apikey: anonKey } });

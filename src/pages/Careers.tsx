@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { getEnv } from '../lib/env';
+import { SUPABASE_LIST_JOBS_URL, SUPABASE_APPLY_JOB_URL, SUPABASE_UPLOAD_RESUME_URL, SUPABASE_ANON_KEY } from '../lib/constants';
 
 type Job = {
   id: string;
@@ -23,10 +23,8 @@ const Careers: React.FC = () => {
     try {
       setUploading(true);
       setUploadMsg(null);
-      const uploadUrl = getEnv('VITE_SUPABASE_UPLOAD_RESUME_URL');
-      const anonKey = getEnv('VITE_SUPABASE_ANON_KEY');
-      if (!uploadUrl) throw new Error('Missing VITE_SUPABASE_UPLOAD_RESUME_URL');
-      if (!anonKey) throw new Error('Missing VITE_SUPABASE_ANON_KEY');
+      const uploadUrl = SUPABASE_UPLOAD_RESUME_URL;
+      const anonKey = SUPABASE_ANON_KEY;
 
       const form = new FormData();
       form.append('file', file);
@@ -75,10 +73,8 @@ const Careers: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const listUrl = getEnv('VITE_SUPABASE_LIST_JOBS_URL');
-        const anonKey = getEnv('VITE_SUPABASE_ANON_KEY');
-        if (!listUrl) throw new Error('Missing VITE_SUPABASE_LIST_JOBS_URL');
-        if (!anonKey) throw new Error('Missing VITE_SUPABASE_ANON_KEY');
+        const listUrl = SUPABASE_LIST_JOBS_URL;
+        const anonKey = SUPABASE_ANON_KEY;
         const res = await fetch(listUrl, { headers: { Authorization: `Bearer ${anonKey}` } });
         if (!res.ok) throw new Error(`Failed to load jobs (${res.status})`);
         const data = await res.json();
@@ -101,10 +97,8 @@ const Careers: React.FC = () => {
     try {
       setSubmitting(true);
       setError(null);
-      const applyUrl = getEnv('VITE_SUPABASE_APPLY_JOB_URL');
-      const anonKey = getEnv('VITE_SUPABASE_ANON_KEY');
-      if (!applyUrl) throw new Error('Missing VITE_SUPABASE_APPLY_JOB_URL');
-      if (!anonKey) throw new Error('Missing VITE_SUPABASE_ANON_KEY');
+      const applyUrl = SUPABASE_APPLY_JOB_URL;
+      const anonKey = SUPABASE_ANON_KEY;
       const res = await fetch(applyUrl, {
         method: 'POST',
         headers: {

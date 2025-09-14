@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
 import checkBadgeIcon from '../assets/check-badge.svg';
-import { getEnv } from '../lib/env';
+import { SUPABASE_FUNCTION_URL, SUPABASE_ANON_KEY } from '../lib/constants';
 
 interface WaitlistModalProps {
   isOpen: boolean;
@@ -23,10 +23,8 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     setErrorMsg(null);
 
     try {
-      const fnUrl = getEnv('REACT_APP_SUPABASE_FUNCTION_URL') || getEnv('VITE_SUPABASE_FUNCTION_URL');
-      const anonKey = getEnv('REACT_APP_SUPABASE_ANON_KEY') || getEnv('VITE_SUPABASE_ANON_KEY');
-      if (!fnUrl) throw new Error('Missing SUPABASE_FUNCTION_URL');
-      if (!anonKey) throw new Error('Missing SUPABASE_ANON_KEY');
+      const fnUrl = SUPABASE_FUNCTION_URL;
+      const anonKey = SUPABASE_ANON_KEY;
 
       const res = await fetch(fnUrl, {
         method: 'POST',

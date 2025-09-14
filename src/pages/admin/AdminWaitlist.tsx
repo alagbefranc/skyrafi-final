@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
 import { Edit, Mail, UserCheck, Archive } from 'lucide-react';
-import { getEnv } from '../../lib/env';
+import * as CONSTANTS from '../../lib/constants';
 
 const AdminWaitlist: React.FC = () => {
   const [waitlist, setWaitlist] = useState<any[]>([]);
@@ -16,7 +16,14 @@ const AdminWaitlist: React.FC = () => {
   const [status, setStatus] = useState('new');
   const [note, setNote] = useState('');
 
-  const fn = (key: string) => getEnv(key);
+  const fn = (key: string) => {
+    switch(key) {
+      case 'VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_WAITLIST_URL;
+      case 'VITE_SUPABASE_ADMIN_UPDATE_WAITLIST_URL': return CONSTANTS.SUPABASE_ADMIN_UPDATE_WAITLIST_URL;
+      case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
+      default: return undefined;
+    }
+  };
 
   const getHeaders = async (): Promise<HeadersInit> => {
     const { data } = await supabase.auth.getSession();

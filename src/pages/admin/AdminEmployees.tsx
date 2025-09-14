@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
 import { Plus, Edit, Trash2, Shield, User } from 'lucide-react';
-import { getEnv } from '../../lib/env';
+import * as CONSTANTS from '../../lib/constants';
 
 const AdminEmployees: React.FC = () => {
   const [employees, setEmployees] = useState<any[]>([]);
@@ -19,7 +19,15 @@ const AdminEmployees: React.FC = () => {
   const [department, setDepartment] = useState('');
   const [status, setStatus] = useState('active');
 
-  const fn = (key: string) => getEnv(key);
+  const fn = (key: string) => {
+    switch(key) {
+      case 'VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_EMPLOYEES_URL;
+      case 'VITE_SUPABASE_ADMIN_UPSERT_EMPLOYEE_URL': return CONSTANTS.SUPABASE_ADMIN_UPSERT_EMPLOYEE_URL;
+      case 'VITE_SUPABASE_ADMIN_DELETE_EMPLOYEE_URL': return CONSTANTS.SUPABASE_ADMIN_DELETE_EMPLOYEE_URL;
+      case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
+      default: return undefined;
+    }
+  };
 
   const getHeaders = async (): Promise<HeadersInit> => {
     const { data } = await supabase.auth.getSession();

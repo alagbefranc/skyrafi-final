@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
 import { Plus, Edit, Trash2, Search, Download } from 'lucide-react';
-import { getEnv } from '../../lib/env';
+import * as CONSTANTS from '../../lib/constants';
 
 const AdminJobs: React.FC = () => {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -22,7 +22,15 @@ const AdminJobs: React.FC = () => {
   const [salary, setSalary] = useState('');
   const [status, setStatus] = useState('open');
 
-  const fn = (key: string) => getEnv(key);
+  const fn = (key: string) => {
+    switch(key) {
+      case 'VITE_SUPABASE_ADMIN_LIST_JOBS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_JOBS_URL;
+      case 'VITE_SUPABASE_ADMIN_CREATE_JOB_URL': return CONSTANTS.SUPABASE_ADMIN_CREATE_JOB_URL;
+      case 'VITE_SUPABASE_ADMIN_DELETE_JOB_URL': return CONSTANTS.SUPABASE_ADMIN_DELETE_JOB_URL;
+      case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
+      default: return undefined;
+    }
+  };
 
   const getHeaders = async (): Promise<HeadersInit> => {
     const { data } = await supabase.auth.getSession();

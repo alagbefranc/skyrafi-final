@@ -4,7 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
 import StatsCard from '../../components/admin/StatsCard';
 import { Users, Briefcase, UserCheck, Clock, Plus } from 'lucide-react';
-import { getEnv } from '../../lib/env';
+import * as CONSTANTS from '../../lib/constants';
 
 const AdminDashboard: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -22,7 +22,16 @@ const AdminDashboard: React.FC = () => {
   const [type, setType] = useState('Full-time');
   const [description, setDescription] = useState('');
 
-  const fn = (key: string) => getEnv(key);
+  const fn = (key: string) => {
+    switch(key) {
+      case 'VITE_SUPABASE_ADMIN_LIST_JOBS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_JOBS_URL;
+      case 'VITE_SUPABASE_ADMIN_LIST_APPLICATIONS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_APPLICATIONS_URL;
+      case 'VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_WAITLIST_URL;
+      case 'VITE_SUPABASE_ADMIN_CREATE_JOB_URL': return CONSTANTS.SUPABASE_ADMIN_CREATE_JOB_URL;
+      case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
+      default: return undefined;
+    }
+  };
 
   // Helper to get the current session access token for authenticated admin calls
   const getAuthHeader = async (): Promise<HeadersInit> => {
