@@ -105,62 +105,6 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     loadData();
-        if (!sessionData.session) {
-          window.location.href = '/admin/login';
-          return;
-        }
-        // Store user email for debugging
-        const { data: userData } = await supabase.auth.getUser();
-        setUserEmail(userData.user?.email ?? null);
-        const headers = await getHeaders();
-
-        // Check admin
-        const checkUrl = fn('VITE_SUPABASE_ADMIN_CHECK_URL');
-        if (!checkUrl) throw new Error('Missing admin check URL');
-        const checkRes = await fetch(checkUrl, { headers });
-        const checkData = await checkRes.json();
-        if (!checkRes.ok) throw new Error(checkData?.error || 'Admin check failed');
-        setIsAdmin(!!checkData?.is_admin);
-        if (!checkData?.is_admin) return;
-
-        // Load jobs
-        const jobsUrl = fn('VITE_SUPABASE_ADMIN_LIST_JOBS_URL');
-        if (!jobsUrl) throw new Error('Missing admin list jobs URL');
-        const jobsRes = await fetch(jobsUrl, { headers });
-        const jobsData = await jobsRes.json();
-        if (!jobsRes.ok) throw new Error(jobsData?.error || 'Failed to load jobs');
-        setJobs(jobsData?.jobs ?? []);
-
-        // Load applications
-        const appsUrl = fn('VITE_SUPABASE_ADMIN_LIST_APPLICATIONS_URL');
-        if (!appsUrl) throw new Error('Missing admin list applications URL');
-        const appsRes = await fetch(appsUrl, { headers });
-        const appsData = await appsRes.json();
-        if (!appsRes.ok) throw new Error(appsData?.error || 'Failed to load applications');
-        setApps(appsData?.applications ?? []);
-
-        // Load waitlist
-        const wlUrl = fn('VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL');
-        if (!wlUrl) throw new Error('Missing admin list waitlist URL');
-        const wlRes = await fetch(wlUrl, { headers });
-        const wlData = await wlRes.json();
-        if (!wlRes.ok) throw new Error(wlData?.error || 'Failed to load waitlist');
-        setWaitlist(wlData?.waitlist ?? []);
-
-        // Load employees
-        const empUrl = fn('VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL');
-        if (!empUrl) throw new Error('Missing admin list employees URL');
-        const empRes = await fetch(empUrl, { headers });
-        const empData = await empRes.json();
-        if (!empRes.ok) throw new Error(empData?.error || 'Failed to load employees');
-        setEmployees(empData?.employees ?? []);
-      } catch (e: any) {
-        setError(e?.message || 'Failed to load admin data');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
   }, []);
 
   const createJob = async (e: React.FormEvent) => {
