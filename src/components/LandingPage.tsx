@@ -194,21 +194,15 @@ const LandingPage: React.FC = () => {
             <motion.div {...fadeIn} className="text-white lg:pr-8 order-1 pt-4 lg:pt-0">
               {/* Hero Headlines */}
               <div className="mb-6">
-                {/* First line - smaller, medium bold */}
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 800 }}>
-                  YOUR STARTING POINT
-                </h1>
-                
-                {/* Second part - larger with gradient */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] lg:leading-[1.2]" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 900 }}>
-                  <div className="text-white mb-1">TO</div>
-                  <div className="bg-gradient-to-r from-sky-blue-200 via-sky-blue-300 to-sky-blue-400 bg-clip-text text-transparent">
-                    FINANCIAL
-                  </div>
-                  <div className="bg-gradient-to-r from-sky-blue-200 via-sky-blue-300 to-sky-blue-400 bg-clip-text text-transparent">
-                    FREEDOM
-                  </div>
+                {/* First line - small, bold, uppercase, light gray */}
+                <div className="text-sm sm:text-base font-bold uppercase tracking-wider text-gray-300/90 mb-3" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 700 }}>
+                  Your Starting Point To
                 </div>
+                
+                {/* Second line - large, bold, white */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.1] text-white" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 900 }}>
+                  Financial Freedom
+                </h1>
               </div>
               
               {/* Body Copy */}
@@ -217,22 +211,20 @@ const LandingPage: React.FC = () => {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 mb-8 w-full max-w-sm">
                 <button 
                   onClick={() => setIsWaitlistOpen(true)}
-                  className="bg-white text-brand-blue px-8 py-3 rounded-full font-medium text-base tracking-wide hover:bg-white/95 transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-sm min-w-[160px] text-center"
+                  className="w-full bg-brand-blue text-white px-8 py-4 rounded-full font-semibold text-base tracking-wide hover:bg-sky-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                   style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
                 >
-                  <span className="relative z-10">Join Waitlist</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white to-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  Join Waitlist
                 </button>
                 <button 
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="group relative bg-white/10 backdrop-blur-md text-white px-8 py-3 rounded-full font-medium text-base tracking-wide hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/30 min-w-[160px] text-center"
+                  className="w-full bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-full font-semibold text-base tracking-wide hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50"
                   style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
                 >
-                  <span className="relative z-10">Learn More</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  Learn More
                 </button>
               </div>
 
