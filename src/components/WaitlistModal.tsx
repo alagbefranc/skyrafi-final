@@ -47,7 +47,16 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || `Request failed (${res.status})`);
+        const errorMsg = data?.error || data?.message || `Request failed (${res.status})`;
+        
+        // Handle duplicate email error with friendly message
+        if (errorMsg.includes('duplicate key value violates unique constraint') || 
+            errorMsg.includes('waitlist_email_key') ||
+            errorMsg.includes('already exists')) {
+          throw new Error("You're already on our waitlist! Check your email for updates.");
+        }
+        
+        throw new Error(errorMsg);
       }
 
       setIsSubmitted(true);
