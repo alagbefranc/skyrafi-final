@@ -18,7 +18,7 @@ const AdminSettings: React.FC = () => {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   // Database stats
-  const [dbStats, setDbStats] = useState({
+  const [dbStats, setDbStats] = useState<any>({
     jobs: 0,
     applications: 0,
     waitlist: 0,

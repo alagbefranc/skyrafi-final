@@ -26,31 +26,32 @@ const AdminWaitlist: React.FC = () => {
     return { Authorization: `Bearer ${token}`, apikey: anon ?? '' } as HeadersInit;
   };
 
+  const fetchWaitlist = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data: userData } = await supabase.auth.getUser();
+      setUserEmail(userData.user?.email ?? null);
+
+      const waitlistUrl = fn('VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL');
+      if (!waitlistUrl) throw new Error('Missing waitlist URL');
+      
+      const headers = await getHeaders();
+      const res = await fetch(waitlistUrl, { headers });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data?.error || 'Failed to load waitlist');
+      setWaitlist(data?.waitlist ?? []);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load waitlist');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const { data: userData } = await supabase.auth.getUser();
-        setUserEmail(userData.user?.email ?? null);
-
-        const waitlistUrl = fn('VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL');
-        if (!waitlistUrl) throw new Error('Missing waitlist URL');
-        
-        const headers = await getHeaders();
-        const res = await fetch(waitlistUrl, { headers });
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data?.error || 'Failed to load waitlist');
-        setWaitlist(data?.waitlist ?? []);
-      } catch (e: any) {
-        setError(e?.message || 'Failed to load waitlist');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    fetchWaitlist();
   }, []);
 
   const updateWaitlistEntry = async (id: string, newStatus: string, newNote: string) => {

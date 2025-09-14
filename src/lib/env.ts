@@ -7,43 +7,42 @@ export const getEnv = (key: string): string | undefined => {
   const env = (typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>;
   
   console.log('Available process.env keys:', Object.keys(env).filter(k => k.includes('SUPABASE')));
-  
-  // Try the requested key first from process.env
-  const fromProcess = env[key];
-  console.log(`fromProcess[${key}]:`, fromProcess ? '***FOUND***' : 'NOT_FOUND');
-  if (fromProcess !== undefined && fromProcess !== null) return fromProcess as string;
-  
-  // For Vite compatibility (development only) - try import.meta.env
   try {
-    if (typeof import.meta !== 'undefined' && (import.meta as any)?.env) {
-      const fromImport = (import.meta as any).env[key];
-      console.log(`fromImport[${key}]:`, fromImport ? '***FOUND***' : 'NOT_FOUND');
-      if (fromImport !== undefined && fromImport !== null) return fromImport as string;
-    }
-  } catch (e) {
-    console.log('import.meta error:', e);
-  }
-  
-  // Try fallback prefixes
-  if (key.startsWith('VITE_')) {
-    const alt = 'REACT_APP_' + key.slice(5);
-    const altVal = env[alt];
-    console.log(`fallback[${alt}]:`, altVal ? '***FOUND***' : 'NOT_FOUND');
-    if (altVal !== undefined && altVal !== null) return altVal;
-  }
-  if (key.startsWith('REACT_APP_')) {
-    const alt = 'VITE_' + key.slice('REACT_APP_'.length);
-    try {
-      if (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.[alt]) {
-        const altVal = (import.meta as any).env[alt];
-        console.log(`vite_fallback[${alt}]:`, altVal ? '***FOUND***' : 'NOT_FOUND');
-        return altVal;
+    // Use a more defensive approach to access import.meta
+    let fromImport: string | undefined
+    let fromProcess: string | undefined
+    
+    // Try import.meta.env if available
+    if (typeof window !== 'undefined' && 'import' in window) {
+      try {
+        fromImport = (import.meta as any)?.env?.[key]
+      } catch {
+        // ignore import.meta access errors
       }
-    } catch (e) {
-      console.log('vite fallback error:', e);
     }
+    
+    // Try process.env
+    if (typeof process !== 'undefined' && process.env) {
+      fromProcess = process.env[key]
+    }
+    
+    if (fromImport !== undefined && fromImport !== null) return fromImport as string
+    if (fromProcess !== undefined && fromProcess !== null) return fromProcess as string
+    
+    // Try alternative prefixes
+    if (key.startsWith('VITE_')) {
+      const alt = 'REACT_APP_' + key.slice(5)
+      const altVal = fromProcess || undefined
+      return altVal as string | undefined
+    }
+    if (key.startsWith('REACT_APP_')) {
+      const alt = 'VITE_' + key.slice('REACT_APP_'.length)
+      const altVal = fromProcess || undefined
+      return altVal as string | undefined
+    }
+    return undefined
+  } catch {
+    // Fallback for environments where neither is available
+    return undefined
   }
-  
-  console.log(`getEnv returning undefined for ${key}`);
-  return undefined;
 };

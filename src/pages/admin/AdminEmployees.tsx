@@ -29,31 +29,32 @@ const AdminEmployees: React.FC = () => {
     return { Authorization: `Bearer ${token}`, apikey: anon ?? '' } as HeadersInit;
   };
 
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data: userData } = await supabase.auth.getUser();
+      setUserEmail(userData.user?.email ?? null);
+
+      const employeesUrl = fn('VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL');
+      if (!employeesUrl) throw new Error('Missing employees URL');
+      
+      const headers = await getHeaders();
+      const res = await fetch(employeesUrl, { headers });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data?.error || 'Failed to load employees');
+      setEmployees(data?.employees ?? []);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load employees');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const { data: userData } = await supabase.auth.getUser();
-        setUserEmail(userData.user?.email ?? null);
-
-        const employeesUrl = fn('VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL');
-        if (!employeesUrl) throw new Error('Missing employees URL');
-        
-        const headers = await getHeaders();
-        const res = await fetch(employeesUrl, { headers });
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data?.error || 'Failed to load employees');
-        setEmployees(data?.employees ?? []);
-      } catch (e: any) {
-        setError(e?.message || 'Failed to load employees');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    fetchEmployees();
   }, []);
 
   const upsertEmployee = async (e: React.FormEvent) => {

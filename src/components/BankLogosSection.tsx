@@ -1,6 +1,5 @@
 import React from 'react';
 import { VelocityScroll } from './ui/scroll-based-velocity';
-import { Building2 } from 'lucide-react';
 
 // Import bank logos
 import chaseLogo from '../assets/bank-logos/chase.png';

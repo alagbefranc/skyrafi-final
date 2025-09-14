@@ -1,25 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  ChevronRight, 
-  Shield, 
-  Smartphone, 
-  TrendingUp, 
-  Users, 
-  Zap, 
-  CheckCircle, 
-  Star,
-  DollarSign,
-  PiggyBank,
-  Target,
-  BarChart3,
-  Lock,
-  Key,
+import {
+  Shield,
   Menu,
-  X,
-  Check,
-  ArrowUpRight
+  X
 } from 'lucide-react';
 import { TestimonialsColumn, Testimonial } from './ui/testimonials-columns';
 import { AvatarCircles } from './ui/avatar-circles';
@@ -27,7 +12,6 @@ import BankLogosSection from './BankLogosSection';
 // Replaced features section with shadcn-based Bento grid
 // import { BentoDemo } from './blocks/bento';
 import WaitlistModal from './WaitlistModal';
-import financialGrowthImg from '../assets/financial-growth.png.png';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
 import skyGif from '../assets/sky.gif';
 import appStoreBadge from '../assets/app-store-badge.svg';
@@ -37,7 +21,6 @@ import googlePlayBadge from '../assets/google-play-badge.svg';
 
 const LandingPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [email, setEmail] = useState('');
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 

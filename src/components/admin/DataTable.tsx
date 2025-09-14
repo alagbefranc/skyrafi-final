@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Search, Download, Filter } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search, Download } from 'lucide-react';
 
 interface Column {
   key: string;

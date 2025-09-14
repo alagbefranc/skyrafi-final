@@ -41,13 +41,70 @@ const AdminDashboard: React.FC = () => {
     return { ...(auth as any), apikey: anon ?? '' } as HeadersInit;
   };
 
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Ensure we have a session; if not, redirect to login
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      // Store user email for debugging
+      const { data: userData } = await supabase.auth.getUser();
+      setUserEmail(userData.user?.email ?? null);
+      const headers = await getHeaders();
+
+      // Check admin
+      const checkUrl = fn('VITE_SUPABASE_ADMIN_CHECK_URL');
+      if (!checkUrl) throw new Error('Missing admin check URL');
+      const checkRes = await fetch(checkUrl, { headers });
+      const checkData = await checkRes.json();
+      if (!checkRes.ok) throw new Error(checkData?.error || 'Admin check failed');
+      setIsAdmin(!!checkData?.is_admin);
+      if (!checkData?.is_admin) return;
+
+      // Load jobs
+      const jobsUrl = fn('VITE_SUPABASE_ADMIN_LIST_JOBS_URL');
+      if (!jobsUrl) throw new Error('Missing admin list jobs URL');
+      const jobsRes = await fetch(jobsUrl, { headers });
+      const jobsData = await jobsRes.json();
+      if (!jobsRes.ok) throw new Error(jobsData?.error || 'Failed to load jobs');
+      setJobs(jobsData?.jobs ?? []);
+
+      // Load applications
+      const appsUrl = fn('VITE_SUPABASE_ADMIN_LIST_APPLICATIONS_URL');
+      if (!appsUrl) throw new Error('Missing admin list applications URL');
+      const appsRes = await fetch(appsUrl, { headers });
+      const appsData = await appsRes.json();
+      if (!appsRes.ok) throw new Error(appsData?.error || 'Failed to load applications');
+      setApps(appsData?.applications ?? []);
+
+      // Load waitlist
+      const wlUrl = fn('VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL');
+      if (!wlUrl) throw new Error('Missing admin list waitlist URL');
+      const wlRes = await fetch(wlUrl, { headers });
+      const wlData = await wlRes.json();
+      if (!wlRes.ok) throw new Error(wlData?.error || 'Failed to load waitlist');
+      setWaitlist(wlData?.waitlist ?? []);
+
+      // Load employees
+      const empUrl = fn('VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL');
+      if (!empUrl) throw new Error('Missing admin list employees URL');
+      const empRes = await fetch(empUrl, { headers });
+      const empData = await empRes.json();
+      if (!empRes.ok) throw new Error(empData?.error || 'Failed to load employees');
+      setEmployees(empData?.employees ?? []);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load admin data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        // Ensure we have a session; if not, redirect to login
-        const { data: sessionData } = await supabase.auth.getSession();
+    loadData();
         if (!sessionData.session) {
           window.location.href = '/admin/login';
           return;
@@ -132,7 +189,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const signOut = async () => {
+  const _signOut = async () => {
     await supabase.auth.signOut();
     window.location.href = '/admin/login';
   };
@@ -147,7 +204,7 @@ const AdminDashboard: React.FC = () => {
     } catch {}
   };
 
-  const updateWaitlist = async (id: string, status: string, note: string) => {
+  const _updateWaitlist = async (id: string, status: string, note: string) => {
     try {
       const updUrl = fn('VITE_SUPABASE_ADMIN_UPDATE_WAITLIST_URL');
       if (!updUrl) throw new Error('Missing waitlist update config');
@@ -174,14 +231,14 @@ const AdminDashboard: React.FC = () => {
     } catch {}
   };
 
-  const upsertEmployee = async (email: string, role: string) => {
+  const _upsertEmployee = async (employee: any) => {
     try {
       const upUrl = fn('VITE_SUPABASE_ADMIN_UPSERT_EMPLOYEE_URL');
       if (!upUrl) throw new Error('Missing upsert employee config');
       const res = await fetch(upUrl, {
         method: 'POST',
         headers: { ...(await getHeaders()), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify(employee),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'Failed to upsert employee');
@@ -443,13 +500,13 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-const EmployeeManager: React.FC<{ employees: any[]; onUpsert: (email: string, role: string) => void; }> = ({ employees, onUpsert }) => {
+const _EmployeeManager = () => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('employee');
 
   return (
     <div>
-      <form onSubmit={(e) => { e.preventDefault(); onUpsert(email, role); }} className="flex flex-col sm:flex-row gap-2 mb-4">
+      <form onSubmit={(e) => { e.preventDefault(); }} className="flex flex-col sm:flex-row gap-2 mb-4">
         <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="employee@example.com" className="flex-1 px-3 py-2 border rounded" required />
         <select value={role} onChange={(e) => setRole(e.target.value)} className="px-3 py-2 border rounded">
           <option value="employee">employee</option>
@@ -467,7 +524,7 @@ const EmployeeManager: React.FC<{ employees: any[]; onUpsert: (email: string, ro
             </tr>
           </thead>
           <tbody>
-            {employees.map((e) => (
+            {[].map((e: any) => (
               <tr key={e.id} className="border-t">
                 <td className="p-2">{new Date(e.created_at).toLocaleString()}</td>
                 <td className="p-2">{e.email}</td>

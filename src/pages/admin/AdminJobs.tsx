@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Download } from 'lucide-react';
 import { getEnv } from '../../lib/env';
 
 const AdminJobs: React.FC = () => {
@@ -32,31 +32,32 @@ const AdminJobs: React.FC = () => {
     return { Authorization: `Bearer ${token}`, apikey: anon ?? '' } as HeadersInit;
   };
 
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data: userData } = await supabase.auth.getUser();
+      setUserEmail(userData.user?.email ?? null);
+
+      const jobsUrl = fn('VITE_SUPABASE_ADMIN_LIST_JOBS_URL');
+      if (!jobsUrl) throw new Error('Missing jobs URL');
+      
+      const headers = await getHeaders();
+      const res = await fetch(jobsUrl, { headers });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data?.error || 'Failed to load jobs');
+      setJobs(data?.jobs ?? []);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load jobs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const { data: userData } = await supabase.auth.getUser();
-        setUserEmail(userData.user?.email ?? null);
-
-        const jobsUrl = fn('VITE_SUPABASE_ADMIN_LIST_JOBS_URL');
-        if (!jobsUrl) throw new Error('Missing jobs URL');
-        
-        const headers = await getHeaders();
-        const res = await fetch(jobsUrl, { headers });
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data?.error || 'Failed to load jobs');
-        setJobs(data?.jobs ?? []);
-      } catch (e: any) {
-        setError(e?.message || 'Failed to load jobs');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    fetchJobs();
   }, []);
 
   const createJob = async (e: React.FormEvent) => {
