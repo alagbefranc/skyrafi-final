@@ -219,10 +219,11 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                       </div>
                     )}
 
-                    <button
-                      type="submit"
-                      disabled={isLoading || !name.trim() || !email.trim()}
-                      className="w-full bg-sky-blue-600 text-white py-4 rounded-full font-semibold hover:bg-sky-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-display tracking-wide"
+                    <button 
+                      onClick={onJoinWaitlist}
+                      disabled={isSubmitting}
+                      data-waitlist-trigger
+                      className="w-full bg-gradient-to-r from-sky-blue-500 to-sky-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-sky-blue-600 hover:to-sky-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-display tracking-wide"
                     >
                       {isLoading ? (
                         <>

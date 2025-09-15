@@ -18,6 +18,7 @@ import BankLogosSection from './BankLogosSection';
 import { BentoDemo } from './blocks/bento';
 import WaitlistModal from './WaitlistModal';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
+import logo2 from '../assets/logo2.png';
 import skyGif from '../assets/sky.gif';
 import appStoreBadge from '../assets/app-store-badge.svg';
 import phoneMockup from '../assets/phone-mockup.png.png';
@@ -362,8 +363,8 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div {...fadeIn} className="order-2 lg:order-1">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 font-display tracking-wide">
-                WHY NOW? WHY SKYRAFI?
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 font-display tracking-wide flex items-center gap-3">
+                WHY NOW? WHY <img src={logo2} alt="Skyrafi" className="h-8 sm:h-9 inline-block" />?
               </h2>
               
               <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-8">
@@ -462,7 +463,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 text-center font-display tracking-wide">
-              EARLY SUPPORTERS LOVE SKYRAFI
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <span>EARLY SUPPORTERS LOVE</span>
+                <img src={logo2} alt="Skyrafi" className="h-8 sm:h-10 lg:h-12 object-contain" />
+              </div>
             </h2>
             <div className="flex justify-center items-center gap-2 mb-4">
               {[...Array(5)].map((_, i) => (
