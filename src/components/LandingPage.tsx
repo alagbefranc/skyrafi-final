@@ -14,8 +14,8 @@ import {
 import { TestimonialsColumn, Testimonial } from './ui/testimonials-columns';
 import { AvatarCircles } from './ui/avatar-circles';
 import BankLogosSection from './BankLogosSection';
-// Replaced features section with shadcn-based Bento grid
-// import { BentoDemo } from './blocks/bento';
+// Features section with shadcn-based Bento grid
+import { BentoDemo } from './blocks/bento';
 import WaitlistModal from './WaitlistModal';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
 import skyGif from '../assets/sky.gif';
@@ -353,7 +353,9 @@ const LandingPage: React.FC = () => {
       <BankLogosSection />
 
       {/* Features Section - Bento Grid */}
-      {/* <BentoDemo /> */}
+      <section id="features">
+        <BentoDemo />
+      </section>
 
       {/* Why Skyrafi Section */}
       <section id="why" className="py-16 sm:py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
