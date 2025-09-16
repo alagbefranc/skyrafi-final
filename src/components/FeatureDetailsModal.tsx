@@ -266,11 +266,11 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
               <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
                 {/* Feature Image */}
                 {getFeatureImage(featureDetails.id) && (
-                  <div className="flex justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 sm:p-12">
+                  <div className="flex justify-center">
                     <img 
                       src={getFeatureImage(featureDetails.id)!} 
                       alt={featureDetails.name}
-                      className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
+                      className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 object-contain"
                     />
                   </div>
                 )}

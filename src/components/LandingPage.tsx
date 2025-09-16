@@ -363,8 +363,12 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div {...fadeIn} className="order-2 lg:order-1">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 font-display tracking-wide flex items-center gap-3">
-                WHY NOW? WHY <img src={logo2} alt="Skyrafi" className="h-8 sm:h-9 inline-block" />?
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 font-display tracking-wide">
+                <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
+                  <span>WHY NOW? WHY</span>
+                  <img src={logo2} alt="Skyrafi" className="h-6 sm:h-8 lg:h-9 object-contain" />
+                  <span>?</span>
+                </div>
               </h2>
               
               <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-8">
