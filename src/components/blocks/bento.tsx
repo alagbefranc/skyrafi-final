@@ -82,7 +82,7 @@ const features = [
   },
 ];
 
-export function BentoDemo() {
+export function BentoDemo({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) {
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -124,6 +124,7 @@ export function BentoDemo() {
         feature={selectedFeature}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onOpenWaitlist={onOpenWaitlist}
       />
     </>
   );

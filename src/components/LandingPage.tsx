@@ -355,7 +355,7 @@ const LandingPage: React.FC = () => {
 
       {/* Features Section - Bento Grid */}
       <section id="features">
-        <BentoDemo />
+        <BentoDemo onOpenWaitlist={() => setIsWaitlistOpen(true)} />
       </section>
 
       {/* Why Skyrafi Section */}

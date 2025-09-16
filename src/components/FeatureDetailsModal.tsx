@@ -24,6 +24,7 @@ interface FeatureDetailsModalProps {
   feature: Feature | null;
   isOpen: boolean;
   onClose: () => void;
+  onOpenWaitlist?: () => void;
 }
 
 const featureData: Record<string, Feature> = {
@@ -157,7 +158,8 @@ const featureData: Record<string, Feature> = {
 export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
   feature,
   isOpen,
-  onClose
+  onClose,
+  onOpenWaitlist
 }) => {
   const [isMobile, setIsMobile] = React.useState(false);
 
@@ -339,9 +341,9 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
                     className="w-full bg-gradient-to-r from-sky-blue-500 to-sky-blue-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-semibold text-sm sm:text-base hover:from-sky-blue-600 hover:to-sky-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                     onClick={() => {
                       onClose();
-                      // Open waitlist modal or navigate to signup
-                      const waitlistButton = document.querySelector('[data-waitlist-trigger]') as HTMLButtonElement;
-                      if (waitlistButton) waitlistButton.click();
+                      if (onOpenWaitlist) {
+                        onOpenWaitlist();
+                      }
                     }}
                   >
                     Join Waitlist to Access This Feature
