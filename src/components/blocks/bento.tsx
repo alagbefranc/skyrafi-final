@@ -110,9 +110,11 @@ export function BentoDemo() {
           </div>
           <BentoGrid className="lg:grid-rows-3">
             {features.map((feature) => (
-              <div key={feature.name} onClick={() => handleFeatureClick(feature)} className="cursor-pointer">
-                <BentoCard {...feature} />
-              </div>
+              <BentoCard 
+                key={feature.name} 
+                {...feature} 
+                onClick={() => handleFeatureClick(feature)}
+              />
             ))}
           </BentoGrid>
         </div>

@@ -1,6 +1,11 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, CheckCircle, TrendingUp, Shield, Calendar, Bell } from 'lucide-react';
+import { X, ArrowLeft, CheckCircle, Brain, DollarSign, ShieldCheck, CalendarDays, BellRing } from 'lucide-react';
+import f1 from '../assets/f1.png';
+import f2 from '../assets/f2.png';
+import f3 from '../assets/f3.png';
+import f4 from '../assets/f4.png';
+import f5 from '../assets/fi.png';
 
 interface Feature {
   id: string;
@@ -24,7 +29,7 @@ interface FeatureDetailsModalProps {
 const featureData: Record<string, Feature> = {
   'ai-payoff-plan': {
     id: 'ai-payoff-plan',
-    icon: TrendingUp,
+    icon: Brain,
     name: 'AI-Powered Payoff Plan',
     description: 'Our intelligent algorithm analyzes your debts and creates a personalized payoff strategy that saves you the most money and time.',
     benefits: [
@@ -49,7 +54,7 @@ const featureData: Record<string, Feature> = {
   },
   'daily-safe-spend': {
     id: 'daily-safe-spend',
-    icon: CheckCircle,
+    icon: DollarSign,
     name: 'Daily Safe-to-Spend',
     description: 'Know exactly what you can spend today without compromising your bills, goals, or debt payoff plan.',
     benefits: [
@@ -75,7 +80,7 @@ const featureData: Record<string, Feature> = {
   'bank-security': {
     id: 'bank-security',
     name: 'Bank-Level Security',
-    icon: Shield,
+    icon: ShieldCheck,
     description: 'Your financial data is protected with enterprise-grade encryption and read-only access. We never touch your money.',
     benefits: [
       '256-bit encryption protection',
@@ -100,7 +105,7 @@ const featureData: Record<string, Feature> = {
   'optimized-calendar': {
     id: 'optimized-calendar',
     name: 'Optimized Calendar',
-    icon: Calendar,
+    icon: CalendarDays,
     description: 'A smart schedule that aligns your payments with paydays and due dates to maximize cash flow and minimize stress.',
     benefits: [
       'Prevent late payment fees',
@@ -125,7 +130,7 @@ const featureData: Record<string, Feature> = {
   'smart-alerts': {
     id: 'smart-alerts',
     name: 'Smart Alerts',
-    icon: Bell,
+    icon: BellRing,
     description: 'Proactive notifications that help you save money, avoid fees, and stay on track with your financial goals.',
     benefits: [
       'Prevent overdraft fees',
@@ -154,12 +159,34 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
   isOpen,
   onClose
 }) => {
-  const isMobile = window.innerWidth < 768;
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   if (!feature || !featureData[feature.id]) return null;
 
   const featureDetails = featureData[feature.id];
   const IconComponent = featureDetails.icon;
+  
+  const getFeatureImage = (id: string) => {
+    switch (id) {
+      case 'ai-payoff-plan': return f1;
+      case 'daily-safe-spend': return f2;
+      case 'bank-security': return f3;
+      case 'optimized-calendar': return f4;
+      case 'smart-alerts': return f5;
+      default: return null;
+    }
+  };
 
   const desktopVariants = {
     hidden: { x: '100%', opacity: 0 },
@@ -197,8 +224,8 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
           <motion.div
             className={`fixed z-50 bg-white ${
               isMobile 
-                ? 'bottom-0 left-0 right-0 rounded-t-3xl max-h-[90vh]'
-                : 'top-0 right-0 w-[500px] h-full shadow-2xl'
+                ? 'bottom-0 left-0 right-0 rounded-t-3xl max-h-[85vh] overflow-hidden'
+                : 'top-0 right-0 w-[600px] h-full shadow-2xl'
             }`}
             variants={isMobile ? mobileVariants : desktopVariants}
             initial="hidden"
@@ -232,12 +259,23 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
 
             {/* Content */}
             <div className={`overflow-y-auto ${
-              isMobile ? 'max-h-[calc(90vh-80px)]' : 'h-[calc(100vh-80px)]'
+              isMobile ? 'max-h-[calc(85vh-80px)]' : 'h-[calc(100vh-80px)]'
             }`}>
-              <div className="p-6 space-y-8">
+              <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+                {/* Feature Image */}
+                {getFeatureImage(featureDetails.id) && (
+                  <div className="flex justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 sm:p-12">
+                    <img 
+                      src={getFeatureImage(featureDetails.id)!} 
+                      alt={featureDetails.name}
+                      className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
+                    />
+                  </div>
+                )}
+
                 {/* Description */}
                 <div>
-                  <p className="text-gray-600 text-base leading-relaxed">
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                     {featureDetails.description}
                   </p>
                 </div>
@@ -245,16 +283,16 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
                 {/* Stats */}
                 {featureDetails.stats && (
                   <div className="grid grid-cols-1 gap-4">
-                    <h3 className="text-lg font-semibold text-gray-900 font-display">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 font-display">
                       Key Metrics
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
                       {featureDetails.stats.map((stat, index) => (
-                        <div key={index} className="bg-gray-50 rounded-lg p-4 text-center">
-                          <div className="text-2xl font-bold text-sky-blue-600 mb-1">
+                        <div key={index} className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                          <div className="text-xl sm:text-2xl font-bold text-sky-blue-600 mb-1">
                             {stat.value}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-xs sm:text-sm text-gray-600">
                             {stat.label}
                           </div>
                         </div>
@@ -265,14 +303,14 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
 
                 {/* Benefits */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 font-display">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 font-display">
                     Key Benefits
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {featureDetails.benefits.map((benefit, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{benefit}</span>
+                      <div key={index} className="flex items-start gap-2 sm:gap-3">
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700 text-sm sm:text-base">{benefit}</span>
                       </div>
                     ))}
                   </div>
@@ -280,25 +318,25 @@ export const FeatureDetailsModal: React.FC<FeatureDetailsModalProps> = ({
 
                 {/* How It Works */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 font-display">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 font-display">
                     How It Works
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {featureDetails.howItWorks.map((step, index) => (
-                      <div key={index} className="flex items-start gap-4">
-                        <div className="w-8 h-8 bg-sky-blue-100 text-sky-blue-600 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                      <div key={index} className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-sky-blue-100 text-sky-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold flex-shrink-0">
                           {index + 1}
                         </div>
-                        <span className="text-gray-700 pt-1">{step}</span>
+                        <span className="text-gray-700 text-sm sm:text-base pt-1">{step}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* CTA */}
-                <div className="pt-4 pb-6">
+                <div className={`pt-4 ${isMobile ? 'pb-6' : 'pb-8'}`}>
                   <button
-                    className="w-full bg-gradient-to-r from-sky-blue-500 to-sky-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-base hover:from-sky-blue-600 hover:to-sky-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-sky-blue-500 to-sky-blue-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-semibold text-sm sm:text-base hover:from-sky-blue-600 hover:to-sky-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                     onClick={() => {
                       onClose();
                       // Open waitlist modal or navigate to signup
