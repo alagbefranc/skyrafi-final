@@ -26,7 +26,8 @@ module.exports = {
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        'display': ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+        'display': ['Chillax', 'Inter', 'system-ui', 'sans-serif'],
+        'chillax': ['Chillax', 'system-ui', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

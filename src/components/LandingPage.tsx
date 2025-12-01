@@ -187,7 +187,7 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 relative min-h-[90vh] overflow-hidden">
+      <section className="pt-20 md:pt-32 pb-12 md:pb-20 px-4 relative min-h-[70vh] md:min-h-[90vh] overflow-hidden">
         {/* Background Gradient Blobs - Dark Mode */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-[10%] -right-[5%] w-[600px] h-[600px] bg-brand-blue/20 rounded-full blur-[100px] opacity-40"></div>
@@ -203,12 +203,12 @@ const LandingPage: React.FC = () => {
               className="lg:col-span-6 text-left pt-4 lg:pt-0 relative z-10"
             >
               {/* Hero Headlines */}
-              <div className="mb-8">
+              <div className="mb-6 md:mb-8">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sky-400 text-sm font-medium mb-6 backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sky-400 text-sm font-medium mb-4 md:mb-6 backdrop-blur-sm"
                 >
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
@@ -221,8 +221,7 @@ const LandingPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.1] text-white tracking-tight mb-6"
-                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                  className="font-chillax text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] text-white tracking-tight mb-4 md:mb-6"
                 >
                   Master your money. <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-sky-400 to-cyan-300">Build your future.</span>
@@ -234,8 +233,7 @@ const LandingPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed max-w-[540px]"
-                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                className="font-sans text-base sm:text-lg md:text-xl text-slate-400 mb-6 md:mb-10 leading-relaxed max-w-[540px]"
               >
                 Stop wondering where your money goes. Skyrafi gives you the clarity to crush debt and build real wealth—automatically.
               </motion.p>
@@ -245,7 +243,7 @@ const LandingPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 w-full max-w-md"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 mb-6 md:mb-10 w-full max-w-md"
               >
                 <button
                   onClick={() => setIsSurveyOpen(true)}
@@ -338,7 +336,7 @@ const LandingPage: React.FC = () => {
               <div className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-sm font-semibold mb-6 shadow-sm backdrop-blur-sm">
                 Why Skyrafi?
               </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 tracking-tight leading-tight">
+              <h2 className="font-chillax text-3xl sm:text-4xl lg:text-5xl font-semibold text-white mb-8 tracking-tight leading-tight">
                 Debt is complicated. <br />
                 <span className="text-brand-blue">We make it simple.</span>
               </h2>
@@ -365,11 +363,11 @@ const LandingPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-[#151B2B] p-6 rounded-2xl border border-white/10 shadow-sm text-center hover:shadow-md hover:shadow-brand-blue/5 transition-all">
-                  <div className="text-4xl sm:text-5xl font-black text-brand-blue mb-2 tracking-tight">$17.5K</div>
+                  <div className="font-chillax text-4xl sm:text-5xl font-bold text-brand-blue mb-2 tracking-tight">$17.5K</div>
                   <p className="text-slate-500 font-medium text-sm uppercase tracking-wider">Avg. Debt Saved</p>
                 </div>
                 <div className="bg-[#151B2B] p-6 rounded-2xl border border-white/10 shadow-sm text-center hover:shadow-md hover:shadow-brand-blue/5 transition-all">
-                  <div className="text-4xl sm:text-5xl font-black text-brand-blue mb-2 tracking-tight">18 MO</div>
+                  <div className="font-chillax text-4xl sm:text-5xl font-bold text-brand-blue mb-2 tracking-tight">18 MO</div>
                   <p className="text-slate-500 font-medium text-sm uppercase tracking-wider">To Freedom</p>
                 </div>
               </div>
@@ -425,7 +423,7 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             className="flex flex-col items-center justify-center max-w-[600px] mx-auto mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 text-center tracking-tight">
+            <h2 className="font-chillax text-3xl sm:text-4xl lg:text-5xl font-semibold text-white mb-6 text-center tracking-tight">
               Loved by <span className="text-brand-blue">Early Adopters</span>
             </h2>
             <div className="flex justify-center items-center gap-1 mb-6">
@@ -455,7 +453,7 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+            <h2 className="font-chillax text-3xl sm:text-4xl font-semibold text-white mb-6 tracking-tight">
               Bank-Grade Security
             </h2>
             <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
@@ -497,7 +495,7 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+            <h2 className="font-chillax text-3xl sm:text-4xl font-semibold text-white mb-6 tracking-tight">
               Simple, Transparent Pricing
             </h2>
             <p className="text-lg sm:text-xl text-slate-400">
@@ -613,7 +611,7 @@ const LandingPage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-8 tracking-tight">
+            <h2 className="font-chillax text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight">
               Ready to rewrite your financial story?
             </h2>
             <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">

@@ -27,8 +27,19 @@ const useTheme = () => useContext(ThemeContext);
 const HorizontalScrollFeatures = () => {
     const { isDarkMode } = useTheme();
     const ulRef = useRef<HTMLUListElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    useEffect(() => {
+        // Skip horizontal scroll animation on mobile for performance
+        if (isMobile) return;
+
         const items = document.querySelectorAll('.horizontal-item');
         const container = ulRef.current;
 
@@ -46,7 +57,7 @@ const HorizontalScrollFeatures = () => {
                 scroll(controls, { target: section });
             }
         }
-    }, []);
+    }, [isMobile]);
 
     const features = [
         {
@@ -91,6 +102,31 @@ const HorizontalScrollFeatures = () => {
         }
     ];
 
+    // Mobile: render as vertical stack, Desktop: horizontal scroll
+    if (isMobile) {
+        return (
+            <section className="py-12 px-4">
+                <div className="space-y-8">
+                    {features.map((feature, i) => (
+                        <div key={i} className={`${isDarkMode ? 'bg-[#151B2B]' : 'bg-white'} rounded-3xl p-6 border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}>
+                            <h2 className={`font-chillax text-2xl sm:text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                                {feature.title}
+                            </h2>
+                            <p className={`text-base ${isDarkMode ? 'text-slate-300' : 'text-slate-600'} mb-4`}>
+                                {feature.desc}
+                            </p>
+                            <img
+                                src={feature.image}
+                                alt={feature.title}
+                                className="w-full max-w-xs mx-auto h-auto rounded-xl opacity-80"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section id="horizontal-section" className="h-[500vh] relative">
             <div className="sticky top-0 h-screen overflow-hidden">
@@ -116,7 +152,7 @@ const HorizontalScrollFeatures = () => {
                             <div className="relative z-10 max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center px-8">
                                 {/* Text Content */}
                                 <div className="text-left lg:text-left">
-                                    <h2 className={`text-5xl sm:text-7xl font-black mb-8 ${isDarkMode ? 'text-white' : 'text-slate-900'} drop-shadow-2xl`}>
+                                    <h2 className={`font-chillax text-5xl sm:text-7xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-slate-900'} drop-shadow-2xl`}>
                                         {feature.title}
                                     </h2>
                                     <p className={`text-xl sm:text-2xl ${isDarkMode ? 'text-white/90' : 'text-slate-700'} max-w-2xl leading-relaxed drop-shadow-lg`}>
@@ -163,7 +199,7 @@ const PricingComingSoon = () => {
                     Pricing Structure
                 </div>
 
-                <h2 className={`text-5xl sm:text-7xl font-black mb-8 ${isDarkMode ? 'text-white' : 'text-slate-900'} tracking-tight`}>
+                <h2 className={`font-chillax text-5xl sm:text-7xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-slate-900'} tracking-tight`}>
                     Invest in your <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-cyan-400">
                         Financial Freedom
@@ -246,10 +282,18 @@ const Card: React.FC<CardProps> = ({ i, text, description, name, role, color, ic
 const StackingCardsTestimonials = () => {
     const { isDarkMode } = useTheme();
     const container = useRef(null);
+    const [isMobile, setIsMobile] = useState(false);
     const { scrollYProgress } = useScroll({
         target: container,
         offset: ['start start', 'end end'],
     });
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const features = [
         {
@@ -286,10 +330,40 @@ const StackingCardsTestimonials = () => {
         },
     ];
 
+    // Mobile: simple vertical layout without scroll animations
+    if (isMobile) {
+        return (
+            <section className={`${isDarkMode ? 'bg-[#0B0F19]' : 'bg-slate-50'} py-16 px-4 transition-colors duration-500`}>
+                <h2 className={`font-chillax text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} text-center mb-10 px-4`}>
+                    Powerful Features. <br /> <span className="text-brand-blue">Built For You.</span>
+                </h2>
+                <div className="space-y-6 max-w-lg mx-auto">
+                    {features.map((card, i) => (
+                        <div
+                            key={i}
+                            style={{ backgroundColor: card.color }}
+                            className={`rounded-2xl p-6 border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="flex-1">
+                                    <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2`}>{card.text}</h3>
+                                    <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>{card.description}</p>
+                                </div>
+                                {card.icon && (
+                                    <img src={card.icon} alt="" className="w-16 h-16 opacity-70" />
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section ref={container} className={`${isDarkMode ? 'bg-[#0B0F19]' : 'bg-slate-50'} relative transition-colors duration-500`}>
             <div className="sticky top-0 h-[50vh] flex items-center justify-center">
-                <h2 className={`text-4xl sm:text-6xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} text-center px-4`}>
+                <h2 className={`font-chillax text-4xl sm:text-6xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} text-center px-4`}>
                     Powerful Features. <br /> <span className="text-brand-blue">Built For You.</span>
                 </h2>
             </div>
@@ -321,6 +395,15 @@ const ScrollLandingPage: React.FC = () => {
     const [isSurveyOpen, setIsSurveyOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect mobile for performance optimization
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Theme colors
     const theme = {
@@ -353,9 +436,7 @@ const ScrollLandingPage: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    return (
-        <ThemeContext.Provider value={{ isDarkMode }}>
-        <ReactLenis root>
+    const content = (
             <div className={`${theme.bg} min-h-screen ${theme.text} selection:bg-brand-blue selection:text-white transition-colors duration-500`}>
 
                 {/* Theme Toggle - Fixed Position */}
@@ -464,7 +545,7 @@ const ScrollLandingPage: React.FC = () => {
                                     Mobile App Coming Soon
                                 </div>
 
-                                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-4 sm:mb-6 leading-[1.1]">
+                                <h1 className="font-chillax text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 sm:mb-6 leading-[1.1]">
                                     Your Starting Point To <br className="hidden sm:block" />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-sky-400 to-cyan-300">
                                         Financial Freedom
@@ -596,7 +677,7 @@ const ScrollLandingPage: React.FC = () => {
                         <div className="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue font-semibold text-xs sm:text-sm tracking-wide uppercase">
                             Launching Soon on iOS & Android
                         </div>
-                        <h2 className={`text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-8 leading-tight ${theme.text}`}>
+                        <h2 className={`font-chillax text-3xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-8 leading-tight ${theme.text}`}>
                             Ready to rewrite <br className="hidden sm:block" /> your financial story?
                         </h2>
                         <p className={`text-base sm:text-lg md:text-xl ${theme.textSecondary} mb-6 sm:mb-10 max-w-2xl mx-auto`}>
@@ -647,7 +728,12 @@ const ScrollLandingPage: React.FC = () => {
                 />
 
             </div>
-        </ReactLenis>
+    );
+
+    // On mobile, skip Lenis smooth scrolling for better performance
+    return (
+        <ThemeContext.Provider value={{ isDarkMode }}>
+            {isMobile ? content : <ReactLenis root>{content}</ReactLenis>}
         </ThemeContext.Provider>
     );
 };
