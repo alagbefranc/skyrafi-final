@@ -18,42 +18,39 @@ const StatsCard: React.FC<StatsCardProps> = ({
   icon: Icon,
   color = 'blue'
 }) => {
-  const colorClasses = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    yellow: 'bg-yellow-500',
-    red: 'bg-red-500',
-    purple: 'bg-purple-500',
+  const colorStyles = {
+    blue: { bg: 'bg-blue-50', text: 'text-blue-600' },
+    green: { bg: 'bg-green-50', text: 'text-green-600' },
+    yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600' },
+    red: { bg: 'bg-red-50', text: 'text-red-600' },
+    purple: { bg: 'bg-purple-50', text: 'text-purple-600' },
   };
 
+  const currentStyle = colorStyles[color];
   const changeColor = changeType === 'increase' ? 'text-green-600' : 'text-red-600';
 
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="p-5">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <div className={`${colorClasses[color]} p-3 rounded-md`}>
-              <Icon className="h-6 w-6 text-white" />
+    <div className="bg-white overflow-hidden rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-500 truncate">
+              {title}
+            </p>
+            <div className="mt-2 flex items-baseline">
+              <p className="text-3xl font-bold text-gray-900">
+                {value}
+              </p>
+              {change !== undefined && (
+                <span className={`ml-2 flex items-baseline text-xs font-medium ${changeColor}`}>
+                  {changeType === 'increase' ? '↑' : '↓'}
+                  {Math.abs(change)}%
+                </span>
+              )}
             </div>
           </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">
-                {title}
-              </dt>
-              <dd className="flex items-baseline">
-                <div className="text-2xl font-semibold text-gray-900">
-                  {value}
-                </div>
-                {change !== undefined && (
-                  <div className={`ml-2 flex items-baseline text-sm font-semibold ${changeColor}`}>
-                    {changeType === 'increase' ? '↗' : '↘'}
-                    {Math.abs(change)}%
-                  </div>
-                )}
-              </dd>
-            </dl>
+          <div className={`flex-shrink-0 rounded-lg p-3 ${currentStyle.bg}`}>
+            <Icon className={`h-6 w-6 ${currentStyle.text}`} aria-hidden="true" />
           </div>
         </div>
       </div>

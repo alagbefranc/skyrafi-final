@@ -15,6 +15,9 @@ import AdminApplications from './pages/admin/AdminApplications';
 import AdminWaitlist from './pages/admin/AdminWaitlist';
 import AdminEmployees from './pages/admin/AdminEmployees';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminSurveyResponses from './pages/admin/AdminSurveyResponses';
+
+import ScrollLandingPage from './components/ScrollLandingPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -23,7 +26,8 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<ScrollLandingPage />} />
+        <Route path="/old" element={<App />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/contact" element={<Contact />} />
@@ -33,6 +37,7 @@ root.render(
         <Route path="/admin/jobs" element={<AdminJobs />} />
         <Route path="/admin/applications" element={<AdminApplications />} />
         <Route path="/admin/waitlist" element={<AdminWaitlist />} />
+        <Route path="/admin/survey" element={<AdminSurveyResponses />} />
         <Route path="/admin/employees" element={<AdminEmployees />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>

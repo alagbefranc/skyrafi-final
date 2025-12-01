@@ -24,9 +24,11 @@ const AdminDashboard: React.FC = () => {
 
   const fn = (key: string) => {
     switch(key) {
+      case 'VITE_SUPABASE_ADMIN_CHECK_URL': return CONSTANTS.SUPABASE_ADMIN_CHECK_URL;
       case 'VITE_SUPABASE_ADMIN_LIST_JOBS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_JOBS_URL;
       case 'VITE_SUPABASE_ADMIN_LIST_APPLICATIONS_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_APPLICATIONS_URL;
       case 'VITE_SUPABASE_ADMIN_LIST_WAITLIST_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_WAITLIST_URL;
+      case 'VITE_SUPABASE_ADMIN_LIST_EMPLOYEES_URL': return CONSTANTS.SUPABASE_ADMIN_LIST_EMPLOYEES_URL;
       case 'VITE_SUPABASE_ADMIN_CREATE_JOB_URL': return CONSTANTS.SUPABASE_ADMIN_CREATE_JOB_URL;
       case 'VITE_SUPABASE_ANON_KEY': return CONSTANTS.SUPABASE_ANON_KEY;
       default: return undefined;
@@ -231,7 +233,7 @@ const AdminDashboard: React.FC = () => {
               onClick={async () => {
                 try {
                   setLoading(true);
-                  const checkUrl = (import.meta as any).env?.VITE_SUPABASE_ADMIN_CHECK_URL as string | undefined;
+                  const checkUrl = fn('VITE_SUPABASE_ADMIN_CHECK_URL');
                   if (!checkUrl) throw new Error('Missing admin check URL');
                   const res = await fetch(checkUrl, { headers: await getHeaders() });
                   const json = await res.json();
@@ -340,34 +342,40 @@ const AdminDashboard: React.FC = () => {
 
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Welcome back! Here's what's happening with your platform.
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
+        <p className="mt-2 text-sm text-gray-500 max-w-2xl">
+          Welcome back! Here's what's happening with your platform today.
         </p>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <StatsCard
           title="Total Jobs"
           value={jobs.length}
           icon={Briefcase}
           color="blue"
+          change={12}
+          changeType="increase"
         />
         <StatsCard
-          title="Applications"
+          title="Total Applications"
           value={apps.length}
           icon={Users}
           color="green"
+          change={5}
+          changeType="increase"
         />
         <StatsCard
-          title="Waitlist"
+          title="Waitlist Size"
           value={waitlist.length}
           icon={UserCheck}
           color="yellow"
+          change={2.4}
+          changeType="decrease"
         />
         <StatsCard
-          title="Employees"
+          title="Team Members"
           value={employees.length}
           icon={Clock}
           color="purple"
@@ -375,51 +383,81 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="mb-8">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
-        <div className="bg-white shadow rounded-lg p-6">
-          <form onSubmit={createJob} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Job Title"
-              required
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-blue-500 focus:border-sky-blue-500"
-            />
-            <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-blue-500 focus:border-sky-blue-500"
-            >
-              <option>Remote</option>
-              <option>On-site</option>
-              <option>Hybrid</option>
-            </select>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-blue-500 focus:border-sky-blue-500"
-            >
-              <option>Full-time</option>
-              <option>Part-time</option>
-              <option>Contract</option>
-            </select>
-            <button
-              type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-sky-blue-600 hover:bg-sky-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-blue-500"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Job
-            </button>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Job Description"
-              className="md:col-span-2 lg:col-span-4 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-blue-500 focus:border-sky-blue-500"
-              rows={3}
-            />
-          </form>
+      <div className="mb-10">
+        <div className="bg-white rounded-2xl p-1 shadow-sm border border-gray-100">
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-900 rounded-lg">
+                  <Plus className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Create New Position</h2>
+                  <p className="text-sm text-gray-500">Post a job listing to the public board</p>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={createJob} className="flex flex-col xl:flex-row items-start gap-4">
+              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                <div className="relative">
+                  <input
+                    id="title"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Job Title"
+                    required
+                    className="w-full bg-gray-50 border-transparent rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 placeholder-gray-500 focus:bg-white focus:border-gray-200 focus:ring-0 transition-all"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <Briefcase className="h-4 w-4" />
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <select
+                    id="location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full bg-gray-50 border-transparent rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 focus:bg-white focus:border-gray-200 focus:ring-0 appearance-none transition-all cursor-pointer"
+                  >
+                    <option>Remote</option>
+                    <option>On-site</option>
+                    <option>Hybrid</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <select
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    className="w-full bg-gray-50 border-transparent rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 focus:bg-white focus:border-gray-200 focus:ring-0 appearance-none transition-all cursor-pointer"
+                  >
+                    <option>Full-time</option>
+                    <option>Part-time</option>
+                    <option>Contract</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full xl:w-auto">
+                <button
+                  type="submit"
+                  className="w-full xl:w-auto px-8 py-3.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all shadow-lg shadow-gray-900/20 whitespace-nowrap"
+                >
+                  Post Job
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -427,9 +465,27 @@ const AdminDashboard: React.FC = () => {
       <div className="space-y-8">
         <DataTable
           data={jobs}
-          columns={jobColumns}
+          columns={[
+            { key: 'title', label: 'Title', sortable: true, render: (v) => <span className="font-medium text-gray-900">{v}</span> },
+            { key: 'location', label: 'Location', sortable: true },
+            { key: 'type', label: 'Type', sortable: true },
+            { key: 'status', label: 'Status', sortable: true, render: (value: string) => (
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize border ${
+                value === 'open' 
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                  : 'bg-gray-50 text-gray-700 border-gray-200'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${value === 'open' ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+                {value}
+              </span>
+            )},
+            { key: 'created_at', label: 'Posted', sortable: true, render: (value: string) => (
+              <span className="text-gray-500 font-mono text-xs">{new Date(value).toLocaleDateString()}</span>
+            )}
+          ]}
           title="Recent Jobs"
         />
+
 
         <DataTable
           data={apps}

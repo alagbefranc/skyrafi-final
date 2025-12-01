@@ -1,46 +1,21 @@
 import React from 'react';
 import { VelocityScroll } from './ui/scroll-based-velocity';
 
-// Import bank logos
-import chaseLogo from '../assets/bank-logos/chase.png';
-import wellsFargoLogo from '../assets/bank-logos/wells-fargo.png';
-import citiLogo from '../assets/bank-logos/citibank.png';
-import usBankLogo from '../assets/bank-logos/us-bank.png';
-import pncLogo from '../assets/bank-logos/pnc.png';
-import capitalOneLogo from '../assets/bank-logos/capital-one.png';
-import tdBankLogo from '../assets/bank-logos/td-bank.png';
-import goldmanLogo from '../assets/bank-logos/goldman-sachs.png';
-import morganStanleyLogo from '../assets/bank-logos/morgan-stanley.png';
-import amexLogo from '../assets/bank-logos/american-express.png';
-import discoverLogo from '../assets/bank-logos/discover.png';
-import allyLogo from '../assets/bank-logos/ally.png';
-import citizensLogo from '../assets/bank-logos/citizens.png';
-import regionsLogo from '../assets/bank-logos/regions.png';
-import truistLogo from '../assets/bank-logos/truist.png';
+// Import Canadian bank logos
 import rbcLogo from '../assets/bank-logos/rbc.png';
-import tdCanadaLogo from '../assets/bank-logos/td-canada.png';
+import tdLogo from '../assets/bank-logos/td-canada.png';
 import scotiabankLogo from '../assets/bank-logos/scotiabank.png';
 import bmoLogo from '../assets/bank-logos/bmo.png';
 import cibcLogo from '../assets/bank-logos/cibc.png';
-import tangerineLogo from '../assets/bank-logos/tangerine.png';
-// Additional US bank logos
-import bnyMellonLogo from '../assets/bank-logos/bny-mellon.png';
-import stateStreetLogo from '../assets/bank-logos/state-street.png';
-import synchronyLogo from '../assets/bank-logos/synchrony.png';
-import fifthThirdLogo from '../assets/bank-logos/fifth-third.png';
-import keyBankLogo from '../assets/bank-logos/keybank.png';
-import huntingtonLogo from '../assets/bank-logos/huntington.png';
-import mtBankLogo from '../assets/bank-logos/mt-bank.png';
-import firstRepublicLogo from '../assets/bank-logos/first-republic.png';
-// Additional Canadian bank logos
 import nationalBankLogo from '../assets/bank-logos/national-bank.png';
 import desjardinsLogo from '../assets/bank-logos/desjardins.png';
+import tangerineLogo from '../assets/bank-logos/tangerine.png';
+import atbLogo from '../assets/bank-logos/atb.png';
 import laurentianLogo from '../assets/bank-logos/laurentian.png';
 import hsbcCanadaLogo from '../assets/bank-logos/hsbc-canada.png';
-import manulifeLogo from '../assets/bank-logos/manulife.png';
-import atbLogo from '../assets/bank-logos/atb.png';
 import cwbLogo from '../assets/bank-logos/cwb.png';
 import equitableLogo from '../assets/bank-logos/equitable.png';
+import manulifeLogo from '../assets/bank-logos/manulife.png';
 
 interface BankLogo {
   name: string;
@@ -52,45 +27,25 @@ interface BankLogo {
 }
 
 const BankLogosSection: React.FC = () => {
-  // Major North American and Canadian Banks with brand colors
+  // Major Canadian Banks with local logos
   const banks: BankLogo[] = [
-    // US Banks with downloaded logos
-    { name: 'JP Morgan Chase', logo: chaseLogo, placeholder: false },
-    { name: 'Wells Fargo', logo: wellsFargoLogo, placeholder: false },
-    { name: 'Citibank', logo: citiLogo, placeholder: false },
-    { name: 'US Bank', logo: usBankLogo, placeholder: false },
-    { name: 'PNC Bank', logo: pncLogo, placeholder: false },
-    { name: 'Capital One', logo: capitalOneLogo, placeholder: false },
-    { name: 'TD Bank', logo: tdBankLogo, placeholder: false },
-    { name: 'Bank of NY Mellon', logo: bnyMellonLogo, placeholder: false },
-    { name: 'State Street', logo: stateStreetLogo, placeholder: false },
-    { name: 'Goldman Sachs', logo: goldmanLogo, placeholder: false },
-    { name: 'Morgan Stanley', logo: morganStanleyLogo, placeholder: false },
-    { name: 'American Express', logo: amexLogo, placeholder: false },
-    { name: 'Discover', logo: discoverLogo, placeholder: false },
-    { name: 'Synchrony', logo: synchronyLogo, placeholder: false },
-    { name: 'Ally Bank', logo: allyLogo, placeholder: false },
-    { name: 'Citizens Bank', logo: citizensLogo, placeholder: false },
-    { name: 'Fifth Third Bank', logo: fifthThirdLogo, placeholder: false },
-    { name: 'KeyBank', logo: keyBankLogo, placeholder: false },
-    { name: 'Huntington', logo: huntingtonLogo, placeholder: false },
-    { name: 'Regions Bank', logo: regionsLogo, placeholder: false },
-    { name: 'M&T Bank', logo: mtBankLogo, placeholder: false },
-    { name: 'Truist', logo: truistLogo, placeholder: false },
-    { name: 'First Republic', logo: firstRepublicLogo, placeholder: false },
-    // Canadian Banks
+    // Big 5 Canadian Banks
     { name: 'RBC Royal Bank', logo: rbcLogo, placeholder: false },
-    { name: 'TD Canada Trust', logo: tdCanadaLogo, placeholder: false },
+    { name: 'TD Canada Trust', logo: tdLogo, placeholder: false },
     { name: 'Scotiabank', logo: scotiabankLogo, placeholder: false },
     { name: 'BMO', logo: bmoLogo, placeholder: false },
     { name: 'CIBC', logo: cibcLogo, placeholder: false },
+
+    // Other Major Canadian Banks
     { name: 'National Bank', logo: nationalBankLogo, placeholder: false },
     { name: 'Desjardins', logo: desjardinsLogo, placeholder: false },
-    { name: 'Laurentian Bank', logo: laurentianLogo, placeholder: false },
-    { name: 'HSBC Canada', logo: hsbcCanadaLogo, placeholder: false },
     { name: 'Tangerine', logo: tangerineLogo, placeholder: false },
+    { name: 'HSBC Canada', logo: hsbcCanadaLogo, placeholder: false },
     { name: 'Manulife Bank', logo: manulifeLogo, placeholder: false },
+
+    // Credit Unions & Regional
     { name: 'ATB Financial', logo: atbLogo, placeholder: false },
+    { name: 'Laurentian Bank', logo: laurentianLogo, placeholder: false },
     { name: 'Canadian Western Bank', logo: cwbLogo, placeholder: false },
     { name: 'Equitable Bank', logo: equitableLogo, placeholder: false },
   ];
@@ -99,49 +54,46 @@ const BankLogosSection: React.FC = () => {
     <div className="inline-flex items-center justify-center mx-4 sm:mx-8 group">
       {bank.placeholder ? (
         <div>
-          <div 
-            className="w-24 h-16 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
-            style={{ backgroundColor: bank.color || '#e5e7eb' }}
+          <div
+            className="w-28 h-14 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg group-hover:shadow-xl group-hover:scale-110"
+            style={{
+              backgroundColor: bank.color || '#1e293b',
+              opacity: 0.9
+            }}
           >
-            <span 
-              className="text-sm font-bold text-center leading-tight whitespace-pre-line"
-              style={{ color: bank.textColor || '#6b7280' }}
+            <span
+              className="text-xs sm:text-sm font-black text-center leading-tight whitespace-pre-line px-2"
+              style={{ color: bank.textColor || '#FFFFFF' }}
             >
               {bank.shortName || bank.name}
             </span>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {bank.name}
-          </p>
         </div>
       ) : (
         <div className="relative">
-          <div className="bg-white rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
-            <img 
-              src={bank.logo} 
+          <div className="transition-all duration-300 opacity-60 group-hover:opacity-100 group-hover:scale-110">
+            <img
+              src={bank.logo}
               alt={bank.name}
-              className="h-8 sm:h-12 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              className="h-10 sm:h-12 w-auto object-contain"
             />
           </div>
-          <p className="text-xs text-gray-500 text-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity absolute w-full">
-            {bank.name}
-          </p>
         </div>
       )}
     </div>
   );
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white">
+    <section className="py-16 bg-[#0B0F19] border-y border-white/5">
       <div className="max-w-7xl mx-auto px-4 mb-6 sm:mb-8">
         <div className="text-center">
-          <h3 className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+          <h3 className="text-xs sm:text-sm font-medium text-brand-blue uppercase tracking-wide mb-2">
             Trusted by users at
           </h3>
-          <p className="text-xl sm:text-2xl font-semibold text-gray-900">
+          <p className="text-xl sm:text-2xl font-semibold text-white">
             Major Financial Institutions
           </p>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-slate-400 mt-2">
             Skyrafi works seamlessly with all major banks in North America
           </p>
         </div>
@@ -158,7 +110,7 @@ const BankLogosSection: React.FC = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 mt-6 sm:mt-8">
-        <p className="text-center text-xs sm:text-sm text-gray-500">
+        <p className="text-center text-xs sm:text-sm text-slate-500">
           Secure connections with 256-bit encryption • Read-only access • Never store your credentials
         </p>
       </div>

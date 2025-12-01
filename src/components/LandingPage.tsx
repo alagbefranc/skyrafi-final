@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Shield,
@@ -14,9 +14,8 @@ import {
 import { TestimonialsColumn, Testimonial } from './ui/testimonials-columns';
 import { AvatarCircles } from './ui/avatar-circles';
 import BankLogosSection from './BankLogosSection';
-// Features section with shadcn-based Bento grid
 import { BentoDemo } from './blocks/bento';
-import WaitlistModal from './WaitlistModal';
+import SurveyModal from './SurveyModal';
 import skyrafiLogo from '../assets/skyrafi-logo.png';
 import logo2 from '../assets/logo2.png';
 import skyGif from '../assets/sky.gif';
@@ -27,13 +26,17 @@ import googlePlayBadge from '../assets/google-play-badge.svg';
 
 const LandingPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const { scrollY } = useScroll();
+  const heroParallax = useTransform(scrollY, [0, 500], [0, 100]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.5]);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 100);
+      setIsScrolled(scrollTop > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -108,47 +111,43 @@ const LandingPage: React.FC = () => {
   const thirdColumn = testimonials.slice(6, 9);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
+    <div className="min-h-screen bg-[#0B0F19] text-slate-50 overflow-hidden selection:bg-brand-blue selection:text-white">
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0B0F19]/80 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
+        }`}>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <img 
-                src={skyrafiLogo} 
-                alt="Skyrafi Logo" 
-                className={`h-14 w-auto transition-all duration-300 ${
-                  isScrolled ? 'brightness-100' : 'brightness-0 invert'
-                }`}
+              <img
+                src={skyrafiLogo}
+                alt="Skyrafi Logo"
+                className="h-10 sm:h-12 w-auto"
               />
             </div>
-            
+
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className={`transition font-display text-sm tracking-wider uppercase ${
-                isScrolled ? 'text-gray-700 hover:text-brand-blue' : 'text-white hover:text-sky-blue-200'
-              }`}>Features</a>
-              <a href="#why" className={`transition font-display text-sm tracking-wider uppercase ${
-                isScrolled ? 'text-gray-700 hover:text-brand-blue' : 'text-white hover:text-sky-blue-200'
-              }`}>Why Skyrafi</a>
-              <a href="#security" className={`transition font-display text-sm tracking-wider uppercase ${
-                isScrolled ? 'text-gray-700 hover:text-brand-blue' : 'text-white hover:text-sky-blue-200'
-              }`}>Security</a>
-              <a href="#pricing" className={`transition font-display text-sm tracking-wider uppercase ${
-                isScrolled ? 'text-gray-700 hover:text-brand-blue' : 'text-white hover:text-sky-blue-200'
-              }`}>Pricing</a>
-              <button 
-                onClick={() => setIsWaitlistOpen(true)}
-                className="bg-brand-blue text-white px-6 py-2 rounded-full hover:bg-sky-blue-700 transition font-display tracking-wide">
-                JOIN WAITLIST
+              {['Features', 'Why Skyrafi', 'Security', 'Pricing'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase().split(' ')[0]}`}
+                  className="text-sm font-medium text-slate-300 hover:text-white transition-colors tracking-wide"
+                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                >
+                  {item}
+                </a>
+              ))}
+              <button
+                onClick={() => setIsSurveyOpen(true)}
+                className="bg-white text-[#0B0F19] px-6 py-2.5 rounded-full hover:bg-slate-100 transition-all shadow-lg shadow-white/10 font-semibold text-sm tracking-wide hover:-translate-y-0.5"
+              >
+                Complete Survey
               </button>
             </div>
 
             {/* Mobile Menu Button */}
-            <button 
-              className={`md:hidden ${isScrolled ? 'text-gray-700' : 'text-white'}`}
+            <button
+              className="md:hidden text-white p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X /> : <Menu />}
@@ -158,20 +157,29 @@ const LandingPage: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden bg-white border-t border-gray-100"
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="md:hidden bg-[#0B0F19] border-t border-white/10 shadow-xl"
           >
-            <div className="px-4 py-4 space-y-4">
-              <a href="#features" className="block text-gray-700 hover:text-brand-blue transition">Features</a>
-              <a href="#why" className="block text-gray-700 hover:text-brand-blue transition">Why Skyrafi</a>
-              <a href="#security" className="block text-gray-700 hover:text-brand-blue transition">Security</a>
-              <a href="#pricing" className="block text-gray-700 hover:text-brand-blue transition">Pricing</a>
-              <button 
-                onClick={() => setIsWaitlistOpen(true)}
-                className="w-full bg-brand-blue text-white px-6 py-2 rounded-full hover:bg-sky-blue-700 transition">
-                Join Waitlist
+            <div className="px-4 py-6 space-y-4">
+              {['Features', 'Why Skyrafi', 'Security', 'Pricing'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase().split(' ')[0]}`}
+                  className="block text-base font-medium text-slate-300 hover:text-white transition px-2 py-2 rounded-lg hover:bg-white/5"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+              <button
+                onClick={() => {
+                  setIsSurveyOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="w-full bg-brand-blue text-white px-6 py-3 rounded-xl hover:bg-sky-blue-700 transition font-semibold mt-4 shadow-lg shadow-brand-blue/20">
+                Complete Survey
               </button>
             </div>
           </motion.div>
@@ -179,269 +187,226 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-0 px-4 relative min-h-screen bg-gradient-to-br from-brand-blue via-sky-blue-700 to-sky-blue-800 overflow-hidden">
-        {/* Smooth Gradient Fade to White at Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-10"></div>
-        {/* Background Pattern */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-[32rem] h-[32rem] bg-white/10 rounded-full filter blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-sky-blue-400/10 rounded-full filter blur-3xl"></div>
+      <section className="pt-32 pb-20 px-4 relative min-h-[90vh] overflow-hidden">
+        {/* Background Gradient Blobs - Dark Mode */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-[10%] -right-[5%] w-[600px] h-[600px] bg-brand-blue/20 rounded-full blur-[100px] opacity-40"></div>
+          <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-purple-500/20 rounded-full blur-[100px] opacity-30"></div>
+          <div className="absolute bottom-[10%] right-[20%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px] opacity-30"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto relative pt-4 px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start min-h-[85vh] lg:pt-8">
+        <div className="max-w-[1400px] mx-auto relative px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left Content - Text */}
-            <motion.div {...fadeIn} className="text-white lg:pr-8 order-1 pt-4 lg:pt-0">
+            <motion.div
+              style={{ opacity: heroOpacity }}
+              className="lg:col-span-6 text-left pt-4 lg:pt-0 relative z-10"
+            >
               {/* Hero Headlines */}
-              <div className="mb-6">
-                {/* First line - small, bold, uppercase, light gray */}
-                <div className="text-sm sm:text-base font-bold uppercase tracking-wider text-gray-300/90 mb-3" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 700 }}>
-                  Your Starting Point To
-                </div>
-                
-                {/* Second line - large, bold, white */}
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.1] text-white" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 900 }}>
-                  Financial Freedom
-                </h1>
+              <div className="mb-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sky-400 text-sm font-medium mb-6 backdrop-blur-sm"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                  </span>
+                  Coming Soon
+                </motion.div>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.1] text-white tracking-tight mb-6"
+                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                >
+                  Master your money. <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-sky-400 to-cyan-300">Build your future.</span>
+                </motion.h1>
               </div>
-              
+
               {/* Body Copy */}
-              <p className="text-base sm:text-lg text-white/80 mb-8 leading-relaxed max-w-[500px]" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontWeight: 400, lineHeight: 1.5 }}>
-                We're building tools to help you truly understand your money, crush debt faster, and build lasting wealth — one smart step at a time.
-              </p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed max-w-[540px]"
+                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+              >
+                Stop wondering where your money goes. Skyrafi gives you the clarity to crush debt and build real wealth—automatically.
+              </motion.p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 mb-8 w-full max-w-sm">
-                <button 
-                  onClick={() => setIsWaitlistOpen(true)}
-                  className="w-full bg-brand-blue text-white px-8 py-4 rounded-full font-semibold text-base tracking-wide hover:bg-sky-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 w-full max-w-md"
+              >
+                <button
+                  onClick={() => setIsSurveyOpen(true)}
+                  className="w-full sm:w-auto bg-brand-blue text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-sky-600 transition-all duration-300 shadow-xl shadow-brand-blue/20 hover:shadow-2xl hover:shadow-brand-blue/30 hover:-translate-y-0.5"
                 >
-                  Join Waitlist
+                  Complete Survey
                 </button>
-                <button 
+                <button
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-full font-semibold text-base tracking-wide hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50"
-                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                  className="w-full sm:w-auto bg-white/5 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all duration-300 border border-white/10 hover:border-white/20 backdrop-blur-sm"
                 >
-                  Learn More
+                  How it works
                 </button>
-              </div>
-
-              {/* Trust Badges */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 text-xs sm:text-sm text-sky-blue-200">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-sky-blue-300 flex-shrink-0" />
-                  <span>Bank-level Security</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <AvatarCircles 
-                    numPeople={99} 
-                    avatarUrls={[
-                      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-                      "https://images.unsplash.com/photo-1494790108755-2616b75fb1f3?w=150&h=150&fit=crop&crop=face",
-                      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
-                    ]}
-                    className="scale-75"
-                  />
-                  <span className="text-sky-blue-200 ml-1">on the waitlist</span>
-                </div>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Right Content - Phone Mockup */}
-            <motion.div 
+            <motion.div
+              style={{ y: heroParallax }}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative order-2 lg:order-2"
+              className="lg:col-span-6 relative"
             >
-              <div className="flex items-center justify-center lg:justify-start gap-8">
-                {/* Phone Mockup Image Container */}
-                <div className="relative">
-                  {/* Gradient backdrop circle */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[400px] h-[400px] lg:w-[500px] lg:h-[500px] bg-gradient-to-br from-white/10 via-sky-blue-300/20 to-sky-blue-400/30 rounded-full filter blur-3xl opacity-60"></div>
-                  </div>
-                  
-                  {/* Secondary glow */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[300px] h-[300px] lg:w-[380px] lg:h-[380px] bg-gradient-to-br from-sky-blue-300/40 to-sky-blue-200/30 rounded-full filter blur-2xl"></div>
-                  </div>
-                  
-                  <img 
-                    src={phoneMockup} 
-                    alt="Skyrafi App Phone Mockup" 
-                    className="relative z-10 w-full h-auto max-w-[650px] lg:max-w-[750px] object-contain"
-                    style={{ 
-                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 30px rgba(14, 165, 233, 0.2))',
-                      maskImage: 'radial-gradient(ellipse 80% 60% at center, black 50%, transparent 90%)',
-                      WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at center, black 50%, transparent 90%)'
-                    }}
+              <div className="relative flex items-center justify-center lg:justify-end">
+                {/* Abstract Background Shapes behind phone */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-b from-brand-blue/10 to-transparent rounded-full blur-3xl -z-10"></div>
+
+                <div className="relative transform lg:translate-x-10 hover:scale-[1.02] transition-transform duration-500 ease-out">
+                  <img
+                    src={phoneMockup}
+                    alt="Skyrafi App Interface"
+                    className="relative z-10 w-full h-auto max-w-[420px] mx-auto drop-shadow-2xl"
                   />
-                </div>
 
-                {/* Coming Soon Buttons - Right side of mockup */}
-                <div className="hidden lg:flex flex-col gap-3">
-                  {/* App Store Badge */}
-                  <button 
-                    onClick={() => setIsWaitlistOpen(true)}
-                    className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg w-[150px] hover:bg-gray-800 transition-colors cursor-pointer"
+                  {/* Floating Feature Cards - Dark Mode */}
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -left-8 top-1/4 bg-[#151B2B] p-4 rounded-2xl shadow-xl shadow-black/20 z-20 max-w-[200px] hidden sm:block border border-white/10"
                   >
-                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                    </svg>
-                    <div className="text-left">
-                      <div className="text-xs opacity-70">Download</div>
-                      <div className="text-sm font-semibold leading-tight">App Store</div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
+                        <ArrowUpRight className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-slate-400">Monthly Savings</div>
+                        <div className="text-lg font-bold text-white">+$1,240</div>
+                      </div>
                     </div>
-                  </button>
-                  
-                  {/* Google Play Badge */}
-                  <button 
-                    onClick={() => setIsWaitlistOpen(true)}
-                    className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg w-[150px] hover:bg-gray-800 transition-colors cursor-pointer"
-                  >
-                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-                    </svg>
-                    <div className="text-left">
-                      <div className="text-xs opacity-70">Download</div>
-                      <div className="text-sm font-semibold leading-tight">Google Play</div>
+                    <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                      <div className="bg-green-500 w-[75%] h-full rounded-full"></div>
                     </div>
-                  </button>
-                </div>
-              </div>
+                  </motion.div>
 
-              {/* Mobile buttons - below mockup on mobile */}
-              <div className="flex lg:hidden flex-col gap-3 mt-6 items-center">
-                {/* App Store Badge - Mobile */}
-                <button 
-                  onClick={() => setIsWaitlistOpen(true)}
-                  className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg w-[150px] hover:bg-gray-800 transition-colors cursor-pointer"
-                >
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                  <div className="text-left">
-                    <div className="text-xs opacity-70">Download</div>
-                    <div className="text-sm font-semibold leading-tight">App Store</div>
-                  </div>
-                </button>
-                
-                {/* Google Play Badge - Mobile */}
-                <button 
-                  onClick={() => setIsWaitlistOpen(true)}
-                  className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg w-[150px] hover:bg-gray-800 transition-colors cursor-pointer"
-                >
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-                  </svg>
-                  <div className="text-left">
-                    <div className="text-xs opacity-70">Download</div>
-                    <div className="text-sm font-semibold leading-tight">Google Play</div>
-                  </div>
-                </button>
+                  <motion.div
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute -right-4 bottom-1/3 bg-[#151B2B] p-4 rounded-2xl shadow-xl shadow-black/20 z-20 hidden sm:block border border-white/10"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue">
+                        <Check className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-white">Debt Free!</div>
+                        <div className="text-xs text-slate-400">Goal Achieved</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
-
       {/* Bank Logos Scroll */}
       <BankLogosSection />
 
       {/* Features Section - Bento Grid */}
       <section id="features">
-        <BentoDemo onOpenWaitlist={() => setIsWaitlistOpen(true)} />
+        <BentoDemo onOpenWaitlist={() => setIsSurveyOpen(true)} />
       </section>
 
       {/* Why Skyrafi Section */}
-      <section id="why" className="py-16 sm:py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+      <section id="why" className="py-20 sm:py-24 px-4 bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div {...fadeIn} className="order-2 lg:order-1">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 font-display tracking-wide">
-                <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
-                  <span>WHY NOW? WHY</span>
-                  <img src={logo2} alt="Skyrafi" className="h-6 sm:h-8 lg:h-9 object-contain" />
-                  <span>?</span>
-                </div>
+              <div className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-sm font-semibold mb-6 shadow-sm backdrop-blur-sm">
+                Why Skyrafi?
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 tracking-tight leading-tight">
+                Debt is complicated. <br />
+                <span className="text-brand-blue">We make it simple.</span>
               </h2>
-              
-              <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-8">
-                <p className="text-lg font-semibold text-red-900 mb-2">
-                  Credit card debt just hit a record high.
-                </p>
-                <p className="text-gray-700">
-                  Most apps only track — we help you take action.
-                </p>
+
+              <div className="bg-[#151B2B] border border-white/10 p-8 rounded-3xl shadow-xl shadow-black/20 mb-10">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-red-500/10 rounded-2xl">
+                    <ArrowUpRight className="w-6 h-6 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white mb-2">
+                      The Problem
+                    </p>
+                    <p className="text-slate-400 leading-relaxed">
+                      Most budgeting apps just show you what you spent. They don't tell you <strong>how to pay it off</strong> or <strong>how to save</strong> simultaneously.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <p className="text-lg sm:text-xl text-gray-700 mb-8">
-                <strong>Our mission is simple:</strong> help you truly understand your money, crush debt faster, and build lasting wealth — one smart step at a time.
+              <p className="text-xl text-slate-400 mb-10 leading-relaxed">
+                Skyrafi is different. We use AI to build a dynamic plan that adapts to your life, helping you crush debt and build wealth on autopilot.
               </p>
 
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-sky-blue-600 mb-2 font-display tracking-wider">$17.5K</div>
-                  <p className="text-gray-600 uppercase text-xs sm:text-sm tracking-wide">Average debt saved</p>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-[#151B2B] p-6 rounded-2xl border border-white/10 shadow-sm text-center hover:shadow-md hover:shadow-brand-blue/5 transition-all">
+                  <div className="text-4xl sm:text-5xl font-black text-brand-blue mb-2 tracking-tight">$17.5K</div>
+                  <p className="text-slate-500 font-medium text-sm uppercase tracking-wider">Avg. Debt Saved</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-sky-blue-600 mb-2 font-display tracking-wider">18 MO</div>
-                  <p className="text-gray-600 uppercase text-xs sm:text-sm tracking-wide">To debt freedom</p>
+                <div className="bg-[#151B2B] p-6 rounded-2xl border border-white/10 shadow-sm text-center hover:shadow-md hover:shadow-brand-blue/5 transition-all">
+                  <div className="text-4xl sm:text-5xl font-black text-brand-blue mb-2 tracking-tight">18 MO</div>
+                  <p className="text-slate-500 font-medium text-sm uppercase tracking-wider">To Freedom</p>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
+              whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
               className="relative order-1 lg:order-2"
             >
               {/* Financial Growth Illustration - iPhone Mockup with Animated GIF */}
               <div className="relative flex flex-col items-center">
-                <div className="relative w-[300px] h-[600px] mb-8">
+                <div className="absolute -inset-4 bg-gradient-to-tr from-brand-blue/20 to-sky-blue-100 rounded-[3rem] blur-2xl opacity-60 -z-10"></div>
+                <div className="relative w-[300px] h-[600px] mb-8 transform hover:scale-[1.02] transition-transform duration-500">
                   {/* iPhone Frame */}
-                  <div className="absolute inset-0 bg-gray-900 rounded-[3rem] shadow-2xl">
+                  <div className="absolute inset-0 bg-slate-900 rounded-[3rem] shadow-2xl ring-8 ring-slate-900/10">
                     {/* Screen */}
-                    <div className="absolute inset-4 bg-black rounded-[2.5rem] overflow-hidden">
+                    <div className="absolute inset-3 bg-black rounded-[2.5rem] overflow-hidden">
                       {/* Animated GIF Display */}
-                      <img 
-                        src={skyGif} 
-                        alt="Track your financial growth with Skyrafi" 
+                      <img
+                        src={skyGif}
+                        alt="Track your financial growth with Skyrafi"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                 </div>
-                
+
                 {/* App Store Download Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
-                  <a 
-                    href="#" 
-                    className="transition-transform hover:scale-105"
-                    aria-label="Download on the App Store"
-                  >
-                    <img 
-                      src={appStoreBadge} 
-                      alt="Download on the App Store" 
-                      className="h-10 w-auto"
-                    />
+                  <a href="#" className="transition-transform hover:scale-105 hover:shadow-lg rounded-lg opacity-90 hover:opacity-100">
+                    <img src={appStoreBadge} alt="Download on the App Store" className="h-12 w-auto" />
                   </a>
-                  <a 
-                    href="#" 
-                    className="transition-transform hover:scale-105"
-                    aria-label="Get it on Google Play"
-                  >
-                    <img 
-                      src={googlePlayBadge} 
-                      alt="Get it on Google Play" 
-                      className="h-10 w-auto"
-                    />
+                  <a href="#" className="transition-transform hover:scale-105 hover:shadow-lg rounded-lg opacity-90 hover:opacity-100">
+                    <img src={googlePlayBadge} alt="Get it on Google Play" className="h-12 w-auto" />
                   </a>
                 </div>
               </div>
@@ -451,217 +416,183 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Social Proof - Animated Testimonials */}
-      <section className="py-16 sm:py-20 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
+      <section className="py-24 bg-[#0B0F19] relative overflow-hidden">
         <div className="container z-10 mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="flex flex-col items-center justify-center max-w-[540px] mx-auto mb-12"
+            className="flex flex-col items-center justify-center max-w-[600px] mx-auto mb-16"
           >
-            <div className="flex justify-center mb-4">
-              <div className="border border-sky-blue-200 bg-sky-blue-50 py-2 px-6 rounded-full">
-                <span className="text-sky-blue-700 font-medium">Testimonials</span>
-              </div>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 text-center font-display tracking-wide">
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <span>EARLY SUPPORTERS LOVE</span>
-                <img src={logo2} alt="Skyrafi" className="h-8 sm:h-10 lg:h-12 object-contain" />
-              </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 text-center tracking-tight">
+              Loved by <span className="text-brand-blue">Early Adopters</span>
             </h2>
-            <div className="flex justify-center items-center gap-2 mb-4">
+            <div className="flex justify-center items-center gap-1 mb-6">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+                <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400 drop-shadow-sm" />
               ))}
             </div>
-            <p className="text-center text-gray-600 text-base sm:text-lg">
-              See what our early adopters have to say about their journey to financial freedom.
+            <p className="text-center text-slate-400 text-lg leading-relaxed">
+              Thousands of people are already paying off debt faster with Skyrafi. Here's what they have to say.
             </p>
           </motion.div>
 
-          <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[740px] overflow-hidden">
-            <TestimonialsColumn testimonials={firstColumn} duration={15} />
-            <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={19} />
-            <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={17} />
+          <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[700px] overflow-hidden py-8">
+            <TestimonialsColumn testimonials={firstColumn} duration={25} />
+            <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={30} />
+            <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={28} />
           </div>
         </div>
       </section>
 
       {/* Security Section */}
-      <section id="security" className="py-16 sm:py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+      <section id="security" className="py-20 sm:py-24 px-4 bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto">
-          <motion.div {...fadeIn} className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 font-display tracking-wide">
-              YOUR SECURITY IS OUR PRIORITY
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+              Bank-Grade Security
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600">
-              We never sell your data. Ever.
+            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
+              Your trust is everything. We use the same encryption standards as major banks to keep your data safe.
             </p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 bg-sky-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-10 h-10 text-sky-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Bank-level Encryption</h3>
-              <p className="text-gray-600">256-bit AES encryption protects all your data</p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 bg-sky-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Lock className="w-10 h-10 text-sky-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Read-only Access</h3>
-              <p className="text-gray-600">We can never move money or make changes</p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 bg-sky-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Key className="w-10 h-10 text-sky-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">SOC 2 Compliant</h3>
-              <p className="text-gray-600">Third-party audited security standards</p>
-            </motion.div>
+            {[
+              { icon: Shield, title: "256-bit Encryption", desc: "We protect your data with the strongest encryption standard available." },
+              { icon: Lock, title: "Read-Only Access", desc: "We can analyze your finances, but we can never move your money." },
+              { icon: Key, title: "SOC 2 Compliant", desc: "Our systems are audited by third-party security experts." }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-[#151B2B] p-8 rounded-3xl shadow-sm border border-white/10 hover:shadow-xl hover:shadow-brand-blue/10 transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:bg-brand-blue group-hover:text-white text-brand-blue">
+                  <item.icon className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-16 sm:py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+      <section id="pricing" className="py-20 sm:py-24 px-4 bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto">
-          <motion.div {...fadeIn} className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 font-display tracking-wide">
-              SIMPLE, TRANSPARENT PRICING
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+              Simple, Transparent Pricing
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600">
-              Cancel anytime. Save thousands in interest.
+            <p className="text-lg sm:text-xl text-slate-400">
+              Invest in your financial freedom for less than the cost of lunch.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
             {/* Free Plan */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white rounded-2xl p-8 shadow-lg"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-[#151B2B] rounded-[2rem] p-8 border border-white/10"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
-              <p className="text-gray-600 mb-6">Get started on your journey</p>
-              <div className="text-4xl font-bold text-gray-900 mb-8 font-display">
-                $0<span className="text-lg font-normal text-gray-600 font-sans">/month</span>
+              <h3 className="text-2xl font-bold text-white mb-2">Free</h3>
+              <p className="text-slate-400 mb-8 font-medium">The Essentials</p>
+              <div className="text-5xl font-bold text-white mb-8 tracking-tight">
+                $0<span className="text-lg font-medium text-slate-500">/mo</span>
               </div>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Basic debt tracking</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Monthly progress reports</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Community support</span>
-                </li>
+                {['Basic debt dashboard', 'Monthly reports', 'Community access'].map((feat) => (
+                  <li key={feat} className="flex items-center gap-3 text-slate-300">
+                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    {feat}
+                  </li>
+                ))}
               </ul>
-              <button className="w-full py-3 border-2 border-gray-300 rounded-full text-gray-700 hover:border-sky-blue-600 hover:text-sky-blue-600 transition">
-                Start Free
+              <button className="w-full py-4 rounded-2xl font-bold text-white bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all">
+                Start for Free
               </button>
             </motion.div>
 
             {/* Pro Plan */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-sky-blue-600 text-white rounded-2xl p-8 shadow-xl transform lg:scale-105 relative"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-brand-blue text-white rounded-[2.5rem] p-10 shadow-2xl shadow-brand-blue/20 relative transform lg:scale-110 z-10"
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-semibold">
-                ⭐ Most Popular
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-sky-400 to-cyan-300 text-[#0B0F19] px-6 py-2 rounded-full text-sm font-bold shadow-lg tracking-wide">
+                MOST POPULAR
               </div>
-              <h3 className="text-2xl font-bold mb-2">Pro</h3>
-              <p className="text-sky-blue-100 mb-6">Accelerate your debt freedom</p>
-              <div className="text-4xl font-bold mb-8 font-display">
-                $9.99<span className="text-lg font-normal text-sky-blue-100 font-sans">/month</span>
+              <h3 className="text-3xl font-bold mb-2">Pro</h3>
+              <p className="text-sky-100 mb-8 font-medium">For Debt Destroyers</p>
+              <div className="text-6xl font-bold mb-8 tracking-tight">
+                $9<span className="text-2xl text-sky-200">.99</span><span className="text-lg font-medium text-sky-100">/mo</span>
               </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-sky-blue-200 mt-0.5" />
-                  <span>AI-powered payment strategy</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-sky-blue-200 mt-0.5" />
-                  <span>Real-time spending insights</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-sky-blue-200 mt-0.5" />
-                  <span>Unlimited debt accounts</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-sky-blue-200 mt-0.5" />
-                  <span>Priority support</span>
-                </li>
+              <ul className="space-y-5 mb-10">
+                {['Smart Payment Strategy (AI)', 'Real-time Spending Insights', 'Unlimited Accounts', 'Priority Support'].map((feat) => (
+                  <li key={feat} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="font-medium">{feat}</span>
+                  </li>
+                ))}
               </ul>
-              <button 
-                onClick={() => setIsWaitlistOpen(true)}
-                className="w-full py-3 bg-white text-sky-blue-600 rounded-full font-semibold hover:bg-gray-100 transition">
+              <button
+                onClick={() => setIsSurveyOpen(true)}
+                className="w-full py-3 bg-white text-brand-blue rounded-full font-semibold hover:bg-gray-100 transition shadow-lg">
                 Join Waitlist
               </button>
             </motion.div>
 
             {/* Family Plan */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl p-8 shadow-lg"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-[#151B2B] rounded-[2rem] p-8 border border-white/10"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Family</h3>
-              <p className="text-gray-600 mb-6">For households and couples</p>
-              <div className="text-4xl font-bold text-gray-900 mb-8 font-display">
-                $14.99<span className="text-lg font-normal text-gray-600 font-sans">/month</span>
+              <h3 className="text-2xl font-bold text-white mb-2">Family</h3>
+              <p className="text-slate-400 mb-8 font-medium">For Households</p>
+              <div className="text-5xl font-bold text-white mb-8 tracking-tight">
+                $14<span className="text-2xl text-slate-400">.99</span><span className="text-lg font-medium text-slate-500">/mo</span>
               </div>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Everything in Pro</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Up to 4 accounts</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Shared goals & progress</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                  <span className="text-gray-700">Family finance coaching</span>
-                </li>
+                {['Everything in Pro', 'Up to 4 accounts', 'Shared goals', 'Family coaching'].map((feat) => (
+                  <li key={feat} className="flex items-center gap-3 text-slate-300">
+                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    {feat}
+                  </li>
+                ))}
               </ul>
-              <button 
-                onClick={() => setIsWaitlistOpen(true)}
-                className="w-full py-3 border-2 border-gray-300 rounded-full text-gray-700 hover:border-sky-blue-600 hover:text-sky-blue-600 transition">
+              <button
+                onClick={() => setIsSurveyOpen(true)}
+                className="w-full py-4 rounded-2xl font-bold text-white bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all"
+              >
                 Join Waitlist
               </button>
             </motion.div>
@@ -670,62 +601,71 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-16 sm:py-20 px-4 bg-gradient-to-r from-sky-blue-600 to-sky-blue-700">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div {...fadeIn}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 font-display tracking-wide">
-              GET EARLY ACCESS
+      <section className="py-24 px-4 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-blue rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-sky-400 rounded-full blur-[100px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-8 tracking-tight">
+              Ready to rewrite your financial story?
             </h2>
-            <p className="text-lg sm:text-xl text-sky-blue-100 mb-8">
-              Join our waitlist today and be the first to take control of your financial future.
+            <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Join the waitlist today and get exclusive early access to the tool that's changing how people manage debt.
             </p>
-            
-            <button 
-              onClick={() => setIsWaitlistOpen(true)}
-              className="bg-white text-sky-blue-600 px-8 sm:px-12 py-4 rounded-full font-semibold hover:bg-gray-100 transition inline-flex items-center justify-center gap-2 font-display tracking-wide text-sm sm:text-base"
-            >
-              JOIN WAITLIST NOW
-              <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
-            </button>
-            
-            <p className="text-sky-blue-100 text-sm">
-              🎁 Bonus: Get our free "Debt Freedom Toolkit" when you join
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => setIsSurveyOpen(true)}
+                className="w-full sm:w-auto bg-brand-blue text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-sky-500 transition-all shadow-lg shadow-brand-blue/25 hover:-translate-y-1"
+              >
+                Get Early Access
+              </button>
+            </div>
+
+            <p className="mt-8 text-slate-500 text-sm font-medium">
+              🔒 No credit card required • Cancel anytime
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-gray-900">
+      <footer className="py-12 px-4 bg-[#0B0F19] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <img 
-                src={skyrafiLogo} 
-                alt="Skyrafi Logo" 
+              <img
+                src={skyrafiLogo}
+                alt="Skyrafi Logo"
                 className="h-16 w-auto mb-3 brightness-0 invert"
               />
-              <p className="text-gray-400">We're building your starting point to financial freedom</p>
+              <p className="text-slate-400">We're building your starting point to financial freedom</p>
             </div>
-            
-            <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+
+            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link>
               <Link to="/terms" className="hover:text-white transition">Terms of Service</Link>
               <Link to="/contact" className="hover:text-white transition">Contact</Link>
               <Link to="/careers" className="hover:text-white transition">Careers</Link>
             </div>
           </div>
-          
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+
+          <div className="mt-8 pt-8 border-t border-white/10 text-center text-sm text-slate-500">
             <p> 2025 Skyrafi. All rights reserved.</p>
           </div>
         </div>
       </footer>
 
-      {/* Waitlist Modal */}
-      <WaitlistModal 
-        isOpen={isWaitlistOpen} 
-        onClose={() => setIsWaitlistOpen(false)} 
+      <SurveyModal
+        isOpen={isSurveyOpen}
+        onClose={() => setIsSurveyOpen(false)}
       />
     </div>
   );

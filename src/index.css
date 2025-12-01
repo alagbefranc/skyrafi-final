@@ -6,21 +6,44 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-midnight: #0B0F19;
+    --color-midnight-light: #151B2B;
+    --color-midnight-lighter: #1E2538;
+    --color-accent-blue: #3B82F6;
+    --color-accent-purple: #8B5CF6;
+    --color-accent-cyan: #06B6D4;
+    --color-text-primary: #F8FAFC;
+    --color-text-secondary: #94A3B8;
+  }
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
-    @apply antialiased;
+    @apply bg-[#0B0F19] text-white antialiased;
+  }
+
+  /* Override browser autofill styles */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #000 !important;
   }
 }
 
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
 }
