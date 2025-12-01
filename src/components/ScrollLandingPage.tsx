@@ -523,7 +523,7 @@ const ScrollLandingPage: React.FC = () => {
                 </nav>
 
                 {/* Hero Section */}
-                <header className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-24 pb-12">
+                <header className="relative min-h-[auto] md:min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-24 pb-8 md:pb-12">
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] ${isDarkMode ? 'bg-brand-blue/20' : 'bg-brand-blue/10'} rounded-full blur-[120px] opacity-30`}></div>
                     </div>
@@ -537,7 +537,7 @@ const ScrollLandingPage: React.FC = () => {
                                 transition={{ duration: 0.8 }}
                                 className="text-center lg:text-left"
                             >
-                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${theme.cardBg} border ${theme.border} text-sky-500 text-sm font-medium mb-6 backdrop-blur-sm`}>
+                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${theme.cardBg} border ${theme.border} text-sky-500 text-xs sm:text-sm font-medium mb-4 sm:mb-6 backdrop-blur-sm`}>
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
@@ -545,24 +545,24 @@ const ScrollLandingPage: React.FC = () => {
                                     Mobile App Coming Soon
                                 </div>
 
-                                <h1 className="font-chillax text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 sm:mb-6 leading-[1.1]">
+                                <h1 className="font-chillax text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-3 sm:mb-6 leading-[1.1]">
                                     Your Starting Point To <br className="hidden sm:block" />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-sky-400 to-cyan-300">
                                         Financial Freedom
                                     </span>
                                 </h1>
-                                <p className={`text-base sm:text-lg md:text-xl ${theme.textSecondary} mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0`}>
+                                <p className={`text-sm sm:text-lg md:text-xl ${theme.textSecondary} mb-4 sm:mb-8 max-w-2xl mx-auto lg:mx-0`}>
                                     We're building the ultimate mobile app to help you crush debt, automate savings, and build wealth. Join the waitlist for early access.
                                 </p>
 
-                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-8 sm:mb-12">
+                                <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6 sm:mb-12">
                                     <button
                                         onClick={() => setIsSurveyOpen(true)}
-                                        className="bg-brand-blue text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-sky-600 active:bg-sky-700 transition shadow-xl shadow-brand-blue/20"
+                                        className="bg-brand-blue text-white px-5 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-lg hover:bg-sky-600 active:bg-sky-700 transition shadow-xl shadow-brand-blue/20"
                                     >
                                         Complete Survey
                                     </button>
-                                    <button className={`${theme.btnSecondary} px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg ${theme.cardHover} transition border`}>
+                                    <button className={`${theme.btnSecondary} px-5 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-lg ${theme.cardHover} transition border`}>
                                         How it Works
                                     </button>
                                 </div>
