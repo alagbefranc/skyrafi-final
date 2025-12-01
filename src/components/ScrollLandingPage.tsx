@@ -558,11 +558,11 @@ const ScrollLandingPage: React.FC = () => {
                                 <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6 sm:mb-12">
                                     <button
                                         onClick={() => setIsSurveyOpen(true)}
-                                        className="bg-brand-blue text-white px-5 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-lg hover:bg-sky-600 active:bg-sky-700 transition shadow-xl shadow-brand-blue/20"
+                                        className="bg-brand-blue text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-sm sm:text-lg hover:bg-sky-600 active:bg-sky-700 transition shadow-xl shadow-brand-blue/20 w-full sm:w-auto"
                                     >
                                         Complete Survey
                                     </button>
-                                    <button className={`${theme.btnSecondary} px-5 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-lg ${theme.cardHover} transition border`}>
+                                    <button className={`${theme.btnSecondary} px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-sm sm:text-lg ${theme.cardHover} transition border w-full sm:w-auto`}>
                                         How it Works
                                     </button>
                                 </div>
@@ -647,7 +647,7 @@ const ScrollLandingPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1, duration: 1 }}
-                        className={`absolute bottom-10 left-1/2 -translate-x-1/2 ${theme.textMuted} animate-bounce flex flex-col items-center gap-2`}
+                        className={`absolute bottom-10 left-1/2 -translate-x-1/2 ${theme.textMuted} animate-bounce hidden md:flex flex-col items-center gap-2`}
                     >
                         <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
                         <ArrowUpRight className="w-4 h-4 rotate-135" />
