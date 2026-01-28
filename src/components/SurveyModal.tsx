@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, Check } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
@@ -59,24 +59,68 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
   // Logic to determine the next step based on answers
   const getNextStep = (currentId: string, answer: any) => {
     if (currentId === 'q1') {
-      return answer === 'Yes' ? 'q2' : 'q4';
+      // Q1: Yes -> Q2, No -> Q4
+      return answer.startsWith('Yes') ? 'q2' : 'q4';
     }
-    if (currentId === 'q2') return 'q3';
-    if (currentId === 'q3') return 'q6'; // Skip q4/q5 if came from "Yes" path
 
+    // Yes Path: Q2 -> Q3 -> Q7
+    if (currentId === 'q2') return 'q3';
+    if (currentId === 'q3') return 'q7';
+
+    // No Path: Q4 -> Q5 -> Q6 -> Q7
     if (currentId === 'q4') return 'q5';
     if (currentId === 'q5') return 'q6';
+    if (currentId === 'q6') return 'q7';
 
-    if (currentId === 'q18') return 'email'; // Last question goes to email capture
+    // Convergence Point: Q7 starts the common section
+    // Q18 -> Email
+    if (currentId === 'q18') return 'email';
 
-    // Default sequential flow for questions 6-18
-    const questionOrder = ['q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18'];
+    // Default sequential flow for questions 7-18
+    const questionOrder = ['q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18'];
     const currentIndex = questionOrder.indexOf(currentId);
     if (currentIndex !== -1 && currentIndex < questionOrder.length - 1) {
       return questionOrder[currentIndex + 1];
     }
 
     return 'email';
+  };
+
+  // Check if an option requires further specification
+  const needsSpecification = (option: string) => {
+    const lower = option.toLowerCase();
+    return lower.includes('other') ||
+      lower.includes('please specify') ||
+      lower.includes('if yes what are you willing to pay');
+  };
+
+  const [otherText, setOtherText] = useState('');
+
+  // Clear otherText when step changes
+  useEffect(() => {
+    setOtherText('');
+  }, [currentStep]);
+
+  const handleUnspecifiedAnswer = (option: string) => {
+    // If it needs spec, just select it and wait for input
+    if (needsSpecification(option)) {
+      setAnswers(prev => ({ ...prev, [currentStep]: option })); // Select it
+      return;
+    }
+    // Otherwise, save and go next
+    handleAnswer(option);
+  };
+
+  const handleSpecifiedAnswer = () => {
+    // Combine the selection with the specification details
+    const baseAnswer = answers[currentStep];
+    const fullAnswer = otherText ? `${baseAnswer}: ${otherText}` : baseAnswer;
+
+    // Save and next
+    setAnswers(prev => ({ ...prev, [currentStep]: fullAnswer }));
+    const next = getNextStep(currentStep, fullAnswer);
+    setCurrentStep(next);
+    setOtherText(''); // Reset for next
   };
 
   const handleAnswer = (answer: any) => {
@@ -161,40 +205,43 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
       type: 'single',
       options: ['Yes', 'No']
     },
+    // --- YES PATH ---
     q2: {
       id: 'q2',
-      text: 'Which budgeting app do you currently use?',
+      text: '(If yes )Which budgeting app do you currently use?',
       type: 'single',
-      options: ['Mint', 'YNAB', 'EveryDollar', 'Excel/Google Sheets', 'Other']
+      options: ['Mint', 'YNAB', 'EveryDollar', 'Excel/Google Sheets', 'Other (please specify)']
     },
     q3: {
       id: 'q3',
-      text: 'What is one feature you wish your current money tool had?',
+      text: '(if yes) What is one feature you wish your current money tool had?',
       type: 'text'
     },
+    // --- NO PATH ---
     q4: {
       id: 'q4',
-      text: 'How do you currently keep track of your spending?',
+      text: '(If no)How do you currently keep track of your spending, Manually (notebook/Excel)',
       type: 'single',
-      options: ['Manually (notebook/Excel)', 'Excel/Google Sheets', 'I don’t track spending']
+      options: ['Excel/Google Sheets', 'I don’t track spending'] // Based on "If no" section in prompt, it lists a) b).
     },
     q5: {
       id: 'q5',
-      text: 'What’s the biggest reason you don’t use a money tool right now?',
+      text: '(If no)What’s the biggest reason you don’t use a money tool right now?',
       type: 'single',
       options: [
         'Too complicated',
         'Don’t trust linking bank accounts',
         'Prefer manual methods',
         'Haven’t found one that fits my needs',
-        'Other'
+        'Other (please specify)'
       ]
     },
     q6: {
       id: 'q6',
-      text: 'What would make you try a money management app?',
+      text: 'What would make you try a money management app? (Open-ended)',
       type: 'text'
     },
+    // --- FOR EVERYONE (Main Flow) ---
     q7: {
       id: 'q7',
       text: 'How often do you check your finances/budget?',
@@ -216,7 +263,7 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
         'Overspending on wants vs. needs',
         'Managing debt payments',
         'Saving consistently',
-        'Other'
+        'Other (please specify)'
       ]
     },
     q10: {
@@ -244,7 +291,7 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
     },
     q13: {
       id: 'q13',
-      text: 'Which features would be most useful in a budgeting app? (Choose top 3)',
+      text: 'Which features would be most useful in a budgeting app? (Rank or choose top 3)',
       type: 'multi',
       options: [
         'Automated expense tracking',
@@ -271,8 +318,8 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
       text: 'Would you be willing to pay for a budgeting app that helps you save money or pay off debt faster?',
       type: 'single',
       options: [
-        'Yes – monthly subscription',
-        'Yes – one-time payment',
+        'Yes – monthly subscription, if yes what are you willing to pay',
+        'Yes – one-time payment, if yes what are you willing to pay',
         'No – I prefer free tools'
       ]
     },
@@ -457,17 +504,62 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="space-y-3 sm:space-y-4">
                   {questions[currentStep].type === 'single' && (
-                    <div className="grid gap-2 sm:gap-3">
-                      {questions[currentStep].options?.map((option) => (
-                        <button
-                          key={option}
-                          onClick={() => handleAnswer(option)}
-                          className="text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-200 hover:border-brand-blue hover:bg-sky-50 active:bg-sky-100 transition-all duration-200 font-medium text-slate-700 hover:text-brand-blue group flex items-center justify-between text-sm sm:text-base"
+                    <div className="space-y-4">
+                      <div className="grid gap-2 sm:gap-3">
+                        {questions[currentStep].options?.map((option) => {
+                          const isSelected = answers[currentStep] === option;
+                          const isSpecifying = isSelected && needsSpecification(option);
+
+                          return (
+                            <div key={option} className="space-y-2">
+                              <button
+                                onClick={() => handleUnspecifiedAnswer(option)}
+                                className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all duration-200 font-medium flex items-center justify-between text-sm sm:text-base ${isSelected
+                                  ? 'border-brand-blue bg-sky-50 text-brand-blue'
+                                  : 'border-gray-200 hover:border-brand-blue hover:bg-sky-50 active:bg-sky-100 text-slate-700'
+                                  }`}
+                              >
+                                <span className="pr-2">{option}</span>
+                                {isSelected ? (
+                                  <Check className="w-5 h-5 flex-shrink-0" />
+                                ) : (
+                                  <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                )}
+                              </button>
+
+                              {isSpecifying && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  className="pl-4 sm:pl-6"
+                                >
+                                  <input
+                                    type="text"
+                                    autoFocus
+                                    value={otherText}
+                                    onChange={(e) => setOtherText(e.target.value)}
+                                    placeholder="Please specify details..."
+                                    className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:border-transparent outline-none"
+                                  />
+                                </motion.div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Show Next button only if we are specifying */}
+                      {needsSpecification(answers[currentStep] || '') && (
+                        <motion.button
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          onClick={handleSpecifiedAnswer}
+                          disabled={!otherText && answers[currentStep] !== 'Other'}
+                          className="w-full bg-slate-900 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold hover:bg-slate-800 transition shadow-lg text-base"
                         >
-                          <span className="pr-2">{option}</span>
-                          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                        </button>
-                      ))}
+                          Next
+                        </motion.button>
+                      )}
                     </div>
                   )}
 
@@ -476,31 +568,62 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
                       <div className="grid gap-2 sm:gap-3">
                         {questions[currentStep].options?.map((option) => {
                           const isSelected = (answers[currentStep] || []).includes(option);
+                          const isSpecifying = isSelected && needsSpecification(option);
+
                           return (
-                            <button
-                              key={option}
-                              onClick={() => {
-                                const current = answers[currentStep] || [];
-                                const next = isSelected
-                                  ? current.filter((i: string) => i !== option)
-                                  : [...current, option];
-                                setAnswers(prev => ({ ...prev, [currentStep]: next }));
-                              }}
-                              className={`text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all duration-200 font-medium flex items-center justify-between text-sm sm:text-base ${isSelected
-                                ? 'border-brand-blue bg-sky-50 text-brand-blue'
-                                : 'border-gray-200 hover:border-brand-blue hover:bg-gray-50 active:bg-gray-100 text-slate-700'
-                                }`}
-                            >
-                              <span className="pr-2">{option}</span>
-                              {isSelected && <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
-                            </button>
+                            <div key={option} className="space-y-2">
+                              <button
+                                onClick={() => {
+                                  const current = answers[currentStep] || [];
+                                  const next = isSelected
+                                    ? current.filter((i: string) => i !== option)
+                                    : [...current, option];
+                                  setAnswers(prev => ({ ...prev, [currentStep]: next }));
+                                }}
+                                className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all duration-200 font-medium flex items-center justify-between text-sm sm:text-base ${isSelected
+                                  ? 'border-brand-blue bg-sky-50 text-brand-blue'
+                                  : 'border-gray-200 hover:border-brand-blue hover:bg-gray-50 active:bg-gray-100 text-slate-700'
+                                  }`}
+                              >
+                                <span className="pr-2">{option}</span>
+                                {isSelected && <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
+                              </button>
+
+                              {isSpecifying && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  className="pl-4 sm:pl-6"
+                                >
+                                  <input
+                                    type="text"
+                                    value={otherText}
+                                    onChange={(e) => setOtherText(e.target.value)}
+                                    placeholder="Please specify details..."
+                                    className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:border-transparent outline-none"
+                                  />
+                                </motion.div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
                       <button
                         onClick={() => {
-                          const next = getNextStep(currentStep, answers[currentStep]);
-                          setCurrentStep(next);
+                          // Merge otherText if applicable
+                          const currentAnswers = answers[currentStep] || [];
+                          const hasOther = currentAnswers.some((a: string) => needsSpecification(a));
+
+                          if (hasOther && otherText) {
+                            const updated = currentAnswers.map((a: string) => needsSpecification(a) ? `${a}: ${otherText}` : a);
+                            setAnswers(prev => ({ ...prev, [currentStep]: updated }));
+                            const next = getNextStep(currentStep, updated);
+                            setCurrentStep(next);
+                            setOtherText('');
+                          } else {
+                            const next = getNextStep(currentStep, currentAnswers);
+                            setCurrentStep(next);
+                          }
                         }}
                         className="w-full bg-slate-900 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold hover:bg-slate-800 active:bg-slate-700 transition shadow-lg text-base"
                       >
