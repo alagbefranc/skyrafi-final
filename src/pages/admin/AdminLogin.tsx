@@ -17,22 +17,18 @@ const AdminLogin: React.FC = () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         try {
-          // Only allow redirect to /admin if this session belongs to an allowlisted admin
-          const checkUrl = CONSTANTS.SUPABASE_ADMIN_CHECK_URL;
-          const anonKey = CONSTANTS.SUPABASE_ANON_KEY;
-          const token = data.session.access_token;
-          if (checkUrl && anonKey && token) {
-            const res = await fetch(checkUrl, {
-              headers: { Authorization: `Bearer ${token}`, apikey: anonKey },
-            });
-            const json = await res.json();
-            if (res.ok && json?.is_admin) {
-              navigate('/admin');
-              return;
-            }
-            setMessage('This account is not authorized for admin. Please sign out and use an admin email.');
+          // Use Supabase SDK to invoke the function, which handles auth/headers automatically
+          const { data: funcData, error: funcError } = await supabase.functions.invoke('admin-check');
+
+          if (funcError) throw funcError;
+
+          if (funcData?.is_admin) {
+            navigate('/admin');
+            return;
           }
+          setMessage('This account is not authorized for admin. Please sign out and use an admin email.');
         } catch (e: any) {
+          console.error('Admin check error:', e);
           setMessage(e?.message || 'Failed to verify admin status');
         }
       }
@@ -60,31 +56,27 @@ const AdminLogin: React.FC = () => {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       if (data.session) {
-        // Double-check admin status to avoid redirect loops
-        const checkUrl = CONSTANTS.SUPABASE_ADMIN_CHECK_URL;
-        const anonKey = CONSTANTS.SUPABASE_ANON_KEY;
-        const token = data.session.access_token;
-        console.log('Admin check debug:', { checkUrl, anonKey: anonKey ? 'present' : 'missing', token: token ? 'present' : 'missing' });
-        if (!checkUrl) {
-          console.error('Missing admin check URL');
-          setMessage('Missing admin check URL');
+        // Use Supabase SDK to invoke the function
+        const { data: funcData, error: funcError } = await supabase.functions.invoke('admin-check');
+
+        if (funcError) {
+          console.error('Admin check function error:', funcError);
+          setMessage('Failed to verify admin privileges.');
           return;
         }
-        if (checkUrl && anonKey && token) {
-          const res = await fetch(checkUrl, { headers: { Authorization: `Bearer ${token}`, apikey: anonKey } });
-          const json = await res.json();
-          if (res.ok && json?.is_admin) {
-            navigate('/admin');
-            return;
-          } else {
-            setMessage('This account is not authorized for admin.');
-            return;
-          }
+
+        if (funcData?.is_admin) {
+          navigate('/admin');
+          return;
+        } else {
+          setMessage('This account is not authorized for admin.');
+          return;
         }
       } else {
         setMessage('Login failed. Please try again.');
       }
     } catch (e: any) {
+      console.error('Login error:', e);
       setMessage(e?.message || 'Failed to sign in');
     } finally {
       setLoading(false);
