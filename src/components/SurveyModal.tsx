@@ -165,6 +165,20 @@ const SurveyModal: React.FC<SurveyModalProps> = ({ isOpen, onClose }) => {
         console.log('Waitlist insert note:', waitlistError.message);
       }
 
+      // Send confirmation email (don't block on failure)
+      try {
+        const emailRes = await fetch('https://wbxmcxqryiggwzzklcdc.supabase.co/functions/v1/send-survey-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name }),
+        });
+        if (!emailRes.ok) {
+          console.log('Email confirmation note:', await emailRes.text());
+        }
+      } catch (emailError) {
+        console.log('Email confirmation failed:', emailError);
+      }
+
       setIsComplete(true);
 
       // Trigger confetti animation

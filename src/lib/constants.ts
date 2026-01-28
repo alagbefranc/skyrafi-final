@@ -20,3 +20,6 @@ export const SUPABASE_ADMIN_UPDATE_WAITLIST_URL = 'https://wbxmcxqryiggwzzklcdc.
 export const SUPABASE_ADMIN_DELETE_JOB_URL = 'https://wbxmcxqryiggwzzklcdc.supabase.co/functions/v1/admin-delete-job';
 export const SUPABASE_ADMIN_UPDATE_APPLICATION_URL = 'https://wbxmcxqryiggwzzklcdc.supabase.co/functions/v1/admin-update-application';
 export const SUPABASE_ADMIN_DELETE_EMPLOYEE_URL = 'https://wbxmcxqryiggwzzklcdc.supabase.co/functions/v1/admin-delete-employee';
+
+// Email confirmation
+export const SUPABASE_SEND_SURVEY_CONFIRMATION_URL = 'https://wbxmcxqryiggwzzklcdc.supabase.co/functions/v1/send-survey-confirmation';
